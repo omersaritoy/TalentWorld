@@ -1,5 +1,6 @@
 package com.TalentWorld.backend.entity;
 
+import com.TalentWorld.backend.enums.Role;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -20,7 +21,14 @@ public class User extends BaseEntity {
     private String email;
     @Column(name="is_active")
     private Boolean isActive=false;
-    public User(String firstName, String lastName, String email, Boolean isActive) {
+
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    private Role role=Role.ROLE_USER;
+
+    public User(String firstName, String lastName, String email, Boolean isActive, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

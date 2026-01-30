@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse saveUser(UserRequest request) {
         User newUser = UserRequest.toUser(request);
         newUser = userRepository.save(newUser);
+
         return UserResponse.toDto(newUser);
     }
 }
