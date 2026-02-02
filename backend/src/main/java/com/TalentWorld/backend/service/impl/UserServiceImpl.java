@@ -7,6 +7,9 @@ import com.TalentWorld.backend.repository.UserRepository;
 import com.TalentWorld.backend.service.UserService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
@@ -17,9 +20,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponse saveUser(UserRequest request) {
-        User newUser = UserRequest.toUser(request);
-        newUser = userRepository.save(newUser);
-
+        User newUser = userRepository.save(UserRequest.toUser(request));
         return UserResponse.toDto(newUser);
+    }
+
+    @Override
+    public List<UserResponse> getUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(UserResponse::toDto).toList();
     }
 }
