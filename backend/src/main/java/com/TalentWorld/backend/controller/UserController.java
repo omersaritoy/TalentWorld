@@ -1,17 +1,17 @@
 package com.TalentWorld.backend.controller;
 
-import com.TalentWorld.backend.dto.request.UserRequest;
+import com.TalentWorld.backend.dto.request.SignupRequest;
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.service.UserService;
+import com.TalentWorld.backend.service.impl.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
 
@@ -19,10 +19,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
-        return ResponseEntity.ok(userService.saveUser(userRequest));
-    }
+
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {
         return ResponseEntity.ok(userService.getUsers());

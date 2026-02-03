@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.antlr.v4.runtime.misc.NotNull;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -24,20 +23,29 @@ public class User extends BaseEntity {
     @Column(name = "email")
     private String email;
     @Column(name = "is_active")
-    private Boolean isActive=false;
-    @Column(name="password")
+    private Boolean isActive = false;
+    @Column(name = "password")
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    private Set<Role> roles = new HashSet<>();
+    //I added default roles -->User
+    private Set<Role> roles = Collections.singleton(Role.ROLE_USER);
 
-    public User(String firstName, String lastName, String email, Boolean isActive, Set<Role> roles,String password) {
+    public User(String firstName, String lastName, String email, Boolean isActive, Set<Role> roles, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.roles = roles;
+        this.password = password;
+    }
+
+    //This constructor for signup request DTO
+    public User(String firstName, String lastName, String email, String password, Set<Role> roles) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
         this.password = password;
     }
 }
