@@ -1,9 +1,7 @@
 package com.TalentWorld.backend.controller;
 
-import com.TalentWorld.backend.dto.request.SignupRequest;
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.service.UserService;
-import com.TalentWorld.backend.service.impl.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

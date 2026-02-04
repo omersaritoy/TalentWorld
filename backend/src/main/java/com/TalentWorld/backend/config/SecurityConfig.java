@@ -1,55 +1,61 @@
 package com.TalentWorld.backend.config;
 
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Bean
-    public InMemoryUserDetailsManager userDetailsService(BCryptPasswordEncoder encoder) {
-        UserDetails user = User.withUsername("user")
-                // Şifreyi açık yazmak yerine encoder ile sarmalıyoruz
-                .password(encoder.encode("password"))
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
+    private final UserDetailsService userDetailsService;
+    private final AuthenticationEntryPointConfig authenticationEntryPointConfig;
+    private final AccessDeniedHandlerConfig accessDeniedHandlerConfig;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Disable CSRF for stateless REST API (token-based authentication)
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                //default cors operations
+                .httpBasic(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                .authorizeHttpRequests(request ->
+                        request.requestMatchers("/api/auth/**").permitAll()
+                                .anyRequest().authenticated()
                 )
-                // Enables HTTP Basic Auth, allowing Spring to read the username/password
-                // sent from Postman's Authorization header and validate it.
-                .httpBasic(Customizer.withDefaults());
-
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(authenticationEntryPointConfig)
+                                .accessDeniedHandler(accessDeniedHandlerConfig));
         return http.build();
     }
 
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        return daoAuthenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration configuration) {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 }
