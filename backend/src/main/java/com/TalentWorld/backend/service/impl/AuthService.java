@@ -4,6 +4,7 @@ import com.TalentWorld.backend.dto.request.SignInRequest;
 import com.TalentWorld.backend.dto.request.SignupRequest;
 import com.TalentWorld.backend.dto.response.AuthResponse;
 import com.TalentWorld.backend.entity.User;
+import com.TalentWorld.backend.enums.Role;
 import com.TalentWorld.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,7 @@ public class AuthService {
     public AuthResponse signup(SignupRequest request) {
         User user = SignupRequest.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(Collections.singleton(Role.ROLE_ADMIN));
         user = userRepository.save(user);
 
         String token = jwtService.generateJwtToken(user);
