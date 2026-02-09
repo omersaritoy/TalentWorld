@@ -30,7 +30,6 @@ public class AuthService {
     public AuthResponse signup(SignupRequest request) {
         User user = SignupRequest.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(Collections.singleton(Role.ROLE_ADMIN));
         user = userRepository.save(user);
 
         String token = jwtService.generateJwtToken(user);

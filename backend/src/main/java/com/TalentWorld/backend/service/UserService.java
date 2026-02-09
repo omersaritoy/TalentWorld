@@ -10,4 +10,7 @@ public interface UserService {
 
     List<UserResponse> getUsers();
     UserResponse getUsrByEmail(String email);
+    List<UserResponse> getActiveUsers();
+    List<UserResponse> getInActiveUsers();
+    String deleteUserById(String id);
 }

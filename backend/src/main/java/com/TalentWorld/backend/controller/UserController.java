@@ -29,4 +29,22 @@ public class UserController {
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.ok(userService.getUsrByEmail(email));
     }
+
+    @GetMapping("/activeUsers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponse>> getActiveUsers() {
+        return ResponseEntity.ok(userService.getActiveUsers());
+    }
+
+    @GetMapping("/inActiveUsers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<UserResponse>> getInActiveUsers() {
+        return ResponseEntity.ok(userService.getInActiveUsers());
+    }
+
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> deleteUserById(@RequestParam String id) {
+        return ResponseEntity.ok(userService.deleteUserById(id));
+    }
 }
