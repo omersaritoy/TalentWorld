@@ -1,5 +1,6 @@
 package com.TalentWorld.backend.controller;
 
+import com.TalentWorld.backend.dto.request.UserUpdate;
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -47,4 +48,10 @@ public class UserController {
     public ResponseEntity<String> deleteUserById(@RequestParam String id) {
         return ResponseEntity.ok(userService.deleteUserById(id));
     }
+
+    @PatchMapping("/updateUser/{userId}")
+    public ResponseEntity<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdate userUpdate) {
+        return ResponseEntity.ok(userService.updateUser(userUpdate, userId));
+    }
+
 }
