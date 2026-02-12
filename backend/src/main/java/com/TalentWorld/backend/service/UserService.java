@@ -16,4 +16,5 @@ public interface UserService {
     List<UserResponse> getInActiveUsers();
     String deleteUserById(String id);
     UserResponse updateUser(UserUpdate userUpdate, String id);
+    UserResponse changeEmailById(String email, String id);
 }

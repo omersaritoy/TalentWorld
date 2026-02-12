@@ -1,6 +1,6 @@
 package com.TalentWorld.backend.service.impl;
 
-
+import org.springframework.transaction.annotation.Transactional;
 import com.TalentWorld.backend.dto.request.UserUpdate;
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.entity.User;
@@ -10,9 +10,7 @@ import com.TalentWorld.backend.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -67,6 +65,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public UserResponse changeEmailById(String email, String id) {
+        validateEmail(email);
+
+        User user = getUserById(id);
+
+        String normalizedEmail = normalizeEmail(email);
+
+        if (user.getEmail().equals(normalizedEmail)) {
+            return UserResponse.toDto(user);
+        }
+
+        checkEmailUniqueness(normalizedEmail);
+
+        user.setEmail(normalizedEmail);
+
+        return UserResponse.toDto(user);
+    }
+
+    @Override
     public UserResponse getUsrByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(
                 "User not found with email: " + email,
@@ -75,4 +93,36 @@ public class UserServiceImpl implements UserService {
 
         return UserResponse.toDto(user);
     }
+
+
+    private void validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new BusinessException(
+                    "Email cannot be empty",
+                    "EMAIL_EMPTY",
+                    HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private String normalizeEmail(String email) {
+        return email.trim().toLowerCase();
+    }
+
+    private void checkEmailUniqueness(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new BusinessException(
+                    "Email already in use",
+                    "EMAIL_ALREADY_EXISTS",
+                    HttpStatus.CONFLICT);
+        }
+    }
+
+    private User getUserById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(
+                        "User not found with id: " + id,
+                        "USER_ID_NOT_FOUND",
+                        HttpStatus.NOT_FOUND));
+    }
+
 }

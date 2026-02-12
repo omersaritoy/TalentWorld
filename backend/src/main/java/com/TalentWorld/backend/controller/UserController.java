@@ -54,4 +54,9 @@ public class UserController {
         return ResponseEntity.ok(userService.updateUser(userUpdate, userId));
     }
 
+    @PatchMapping("/changeEmailById/{userId}")
+    public ResponseEntity<UserResponse> changeEmailById(@PathVariable String userId, @RequestBody String email) {
+        return ResponseEntity.ok(userService.changeEmailById(email, userId));
+    }
+
 }
