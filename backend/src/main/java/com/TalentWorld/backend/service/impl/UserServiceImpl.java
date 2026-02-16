@@ -134,12 +134,26 @@ public class UserServiceImpl implements UserService {
 
     private void checkPermission(String userId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        assert auth != null;
+        if(auth==null)
+            throw new BusinessException(
+                    "Unauthorized",
+                    "UNAUTHORIZED",
+                    HttpStatus.UNAUTHORIZED
+            );
+
         User currentUser = (User) auth.getPrincipal();
 
-        assert currentUser != null;
+        if(currentUser==null)
+            throw new BusinessException(
+                    "Unauthorized",
+                    "UNAUTHORIZED",
+                    HttpStatus.UNAUTHORIZED
+            );
+
+
         boolean isAdmin = currentUser.getAuthorities().stream().anyMatch(
-                a -> Objects.equals(a.getAuthority(), "ADMIN"));
+                a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN")
+        );
         boolean isOwner = currentUser.getId().equals(userId);
 
 

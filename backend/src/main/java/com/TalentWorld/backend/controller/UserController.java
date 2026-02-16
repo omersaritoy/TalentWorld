@@ -2,9 +2,13 @@ package com.TalentWorld.backend.controller;
 
 import com.TalentWorld.backend.dto.request.UserUpdate;
 import com.TalentWorld.backend.dto.response.UserResponse;
+import com.TalentWorld.backend.entity.User;
+import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,6 +63,14 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN') or #userId==authentication.principal.id")
     public ResponseEntity<UserResponse> changeEmailById(@PathVariable String userId, @RequestBody String email) {
         return ResponseEntity.ok(userService.changeEmailById(email, userId));
+    }
+    @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserResponse> me(Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        if(currentUser==null)
+            throw new BusinessException("User Not Found","USER_NOT_FOUND", HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(UserResponse.toDto(currentUser));
     }
 
 }
