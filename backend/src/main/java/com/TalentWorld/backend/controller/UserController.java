@@ -35,7 +35,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsrByEmail(email));
     }
 
-    @GetMapping("/activeUsers")
+        @GetMapping("/activeUsers")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getActiveUsers() {
         return ResponseEntity.ok(userService.getActiveUsers());
@@ -47,9 +47,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getInActiveUsers());
     }
 
-    @DeleteMapping
+    @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> deleteUserById(@RequestParam String id) {
+    public ResponseEntity<String> deleteUserById(@PathVariable String id) {
         return ResponseEntity.ok(userService.deleteUserById(id));
     }
 
@@ -64,6 +64,7 @@ public class UserController {
     public ResponseEntity<UserResponse> changeEmailById(@PathVariable String userId, @RequestBody String email) {
         return ResponseEntity.ok(userService.changeEmailById(email, userId));
     }
+
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> me(Authentication authentication) {

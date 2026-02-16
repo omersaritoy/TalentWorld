@@ -1,5 +1,6 @@
 package com.TalentWorld.backend.dto.response;
 
+import com.TalentWorld.backend.entity.TalentProfile;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.enums.Role;
 

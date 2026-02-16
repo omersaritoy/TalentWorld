@@ -133,6 +133,25 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkPermission(String userId) {
+        User currentUser = getUser();
+
+
+        boolean isAdmin = currentUser.getAuthorities().stream().anyMatch(
+                a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN")
+        );
+        boolean isOwner = currentUser.getId().equals(userId);
+
+
+        if (!isAdmin && !isOwner) {
+            throw new BusinessException(
+                    "You are not allowed to change this email",
+                    "ACCESS_DENIED",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+    }
+
+    private static User getUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth==null)
             throw new BusinessException(
@@ -149,21 +168,7 @@ public class UserServiceImpl implements UserService {
                     "UNAUTHORIZED",
                     HttpStatus.UNAUTHORIZED
             );
-
-
-        boolean isAdmin = currentUser.getAuthorities().stream().anyMatch(
-                a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN")
-        );
-        boolean isOwner = currentUser.getId().equals(userId);
-
-
-        if (!isAdmin && !isOwner) {
-            throw new BusinessException(
-                    "You are not allowed to change this email",
-                    "ACCESS_DENIED",
-                    HttpStatus.FORBIDDEN
-            );
-        }
+        return currentUser;
     }
 
 }
