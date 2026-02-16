@@ -50,11 +50,13 @@ public class UserController {
     }
 
     @PatchMapping("/updateUser/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or #userId==authentication.principal.id")
     public ResponseEntity<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdate userUpdate) {
         return ResponseEntity.ok(userService.updateUser(userUpdate, userId));
     }
 
     @PatchMapping("/changeEmailById/{userId}")
+    @PreAuthorize("hasRole('ADMIN') or #userId==authentication.principal.id")
     public ResponseEntity<UserResponse> changeEmailById(@PathVariable String userId, @RequestBody String email) {
         return ResponseEntity.ok(userService.changeEmailById(email, userId));
     }

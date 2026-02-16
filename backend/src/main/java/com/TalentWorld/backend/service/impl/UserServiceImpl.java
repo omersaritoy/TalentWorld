@@ -1,5 +1,7 @@
 package com.TalentWorld.backend.service.impl;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
 import com.TalentWorld.backend.dto.request.UserUpdate;
 import com.TalentWorld.backend.dto.response.UserResponse;
@@ -11,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -59,6 +62,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new BusinessException("User not found with id: " + id,
                 "USER_ID_NOT_FOUND",
                 HttpStatus.NOT_FOUND));
+        checkPermission(id);//check user roles--> admin or owner
         userUpdate.applyTo(user);
 
         return UserResponse.toDto(userRepository.save(user));
@@ -67,6 +71,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse changeEmailById(String email, String id) {
+
+        checkPermission(id);
+
         validateEmail(email);
 
         User user = getUserById(id);
@@ -123,6 +130,26 @@ public class UserServiceImpl implements UserService {
                         "User not found with id: " + id,
                         "USER_ID_NOT_FOUND",
                         HttpStatus.NOT_FOUND));
+    }
+
+    private void checkPermission(String userId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        assert auth != null;
+        User currentUser = (User) auth.getPrincipal();
+
+        assert currentUser != null;
+        boolean isAdmin = currentUser.getAuthorities().stream().anyMatch(
+                a -> Objects.equals(a.getAuthority(), "ADMIN"));
+        boolean isOwner = currentUser.getId().equals(userId);
+
+
+        if (!isAdmin && !isOwner) {
+            throw new BusinessException(
+                    "You are not allowed to change this email",
+                    "ACCESS_DENIED",
+                    HttpStatus.FORBIDDEN
+            );
+        }
     }
 
 }
