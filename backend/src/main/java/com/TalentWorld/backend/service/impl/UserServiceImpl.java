@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService {
 
     private static User getUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth==null)
+        if (auth == null)
             throw new BusinessException(
                     "Unauthorized",
                     "UNAUTHORIZED",
@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
 
         User currentUser = (User) auth.getPrincipal();
 
-        if(currentUser==null)
+        if (currentUser == null)
             throw new BusinessException(
                     "Unauthorized",
                     "UNAUTHORIZED",

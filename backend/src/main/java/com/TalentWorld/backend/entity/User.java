@@ -2,6 +2,7 @@ package com.TalentWorld.backend.entity;
 
 import com.TalentWorld.backend.enums.Role;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,7 @@ public class User extends BaseEntity implements UserDetails {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.isActive = isActive;
         this.roles = roles;
         this.password = password;
     }

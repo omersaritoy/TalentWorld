@@ -2,7 +2,7 @@ spring:
   application:
     name: backend
   datasource:
-    url: jdbc:mysql://localhost:3306/talent_world
+    url: jdbc:mysql://localhost:3305/talent_world
     username: root
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver

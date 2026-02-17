@@ -5,10 +5,12 @@ import com.TalentWorld.backend.dto.request.SignupRequest;
 import com.TalentWorld.backend.dto.response.AuthResponse;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.enums.Role;
+import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -28,6 +30,11 @@ public class AuthService {
     private final JwtService jwtService;
 
     public AuthResponse signup(SignupRequest request) {
+        if(userRepository.existsByEmail(request.email()))
+            throw  new BusinessException("User email already exist",
+                    "EMAIL_ALREADY_EXIST",
+                    HttpStatus.CONFLICT);
+
         User user = SignupRequest.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user = userRepository.save(user);

@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class TalentProfile extends BaseEntity {
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 

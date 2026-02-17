@@ -6,7 +6,7 @@ services:
     container_name: mysql
     restart: always
     ports:
-      - "3306:3306"
+      - "3305:3306"
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: talent_world
