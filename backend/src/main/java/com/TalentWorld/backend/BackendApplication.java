@@ -32,7 +32,7 @@ public class BackendApplication implements CommandLineRunner {
         if (!userRepository.existsByEmail("admin2@gmail.com")) {
             User admin = new User();
             admin.setEmail("admin2@gmail.com");
-            // diğer alanlar
+            admin.setPassword(passwordEncoder.encode("admin123!!"));
             userRepository.save(admin);
         }
     }
