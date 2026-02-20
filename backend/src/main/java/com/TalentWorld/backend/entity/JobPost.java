@@ -1,6 +1,8 @@
 package com.TalentWorld.backend.entity;
 
+import com.TalentWorld.backend.enums.EmploymentType;
 import com.TalentWorld.backend.enums.ExperienceLevel;
+import com.TalentWorld.backend.enums.WorkType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,7 @@ public class JobPost extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="recruiter_id", nullable=false)
     private User user;
+
     @Column(nullable = false)
     private String title;
 
@@ -30,6 +33,9 @@ public class JobPost extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "experience_level")
     private ExperienceLevel experienceLevel;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "employment_type")
+    private EmploymentType employmentType;
 
     @Column(name = "min_experience_year")
     private Integer minExperienceYear;
@@ -45,8 +51,11 @@ public class JobPost extends BaseEntity {
     @Column(name = "skill")
     private Set<String> skills;
 
-    private Boolean isRemote = false;
+    @Enumerated(EnumType.STRING)
+    @Column(name="work_type")
+    private WorkType workType= WorkType.ONSITE;
 
     private Boolean isActive = true;
 
 }
+

@@ -1,7 +1,11 @@
 package com.TalentWorld.backend.dto.response;
 
+import com.TalentWorld.backend.entity.JobPost;
 import com.TalentWorld.backend.entity.User;
+import com.TalentWorld.backend.enums.EmploymentType;
+import com.TalentWorld.backend.enums.ExperienceLevel;
 import com.TalentWorld.backend.enums.Role;
+import com.TalentWorld.backend.enums.WorkType;
 
 import java.util.Set;
 import java.util.stream.Collectors;

@@ -35,6 +35,13 @@ public class BackendApplication implements CommandLineRunner {
             admin.setPassword(passwordEncoder.encode("admin123!!"));
             userRepository.save(admin);
         }
+        if (!userRepository.existsByEmail("recruiter@gmail.com")) {
+            User recruiter = new User();
+            recruiter.setEmail("recruiter@gmail.com");
+            recruiter.setPassword(passwordEncoder.encode("recruiter123!!"));
+            recruiter.setRoles(Collections.singleton(Role.ROLE_RECRUITER));
+            userRepository.save(recruiter);
+        }
     }
 }
 
