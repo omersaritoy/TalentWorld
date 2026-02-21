@@ -39,6 +39,7 @@ public class TalentProfileImpl implements TalentService {
                     HttpStatus.CONFLICT
             );
         }
+
         TalentProfile profile = new TalentProfile();
         profile.setUser(currentUser);
         request.applyTo(profile);

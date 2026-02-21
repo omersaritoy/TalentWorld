@@ -12,6 +12,5 @@ services:
       MYSQL_DATABASE: talent_world
     volumes:
       - mysql_data:/var/lib/mysql
-
 volumes:
   mysql_data:

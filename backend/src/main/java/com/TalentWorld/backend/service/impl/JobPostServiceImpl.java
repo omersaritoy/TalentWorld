@@ -34,6 +34,9 @@ public class JobPostServiceImpl implements JobPostService {
         if (!recurringUser.getRoles().contains(ROLE_RECRUITER)) {
             throw new BusinessException("User Not RECRUITER", "USER_ROLE_NOT_ALLOWED", HttpStatus.FORBIDDEN);
         }
+        if(request.maxExperienceYear()<request.minExperienceYear()) {
+            throw new BusinessException("Min experience year can not be bigger than max experience year", "MAX_EXPERIENCE_YEAR", HttpStatus.BAD_REQUEST);
+        }
         JobPost jobPost = JobPostCreateRequest.toEntityDto(request);
         jobPost.setUser(recurringUser);
 
