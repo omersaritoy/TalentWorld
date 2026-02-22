@@ -4,6 +4,7 @@ import com.TalentWorld.backend.service.impl.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,9 +37,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request ->
-                        request.requestMatchers("/api/auth/**").permitAll()
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(request -> request
+                        // AUTH
+                        .requestMatchers("/api/auth/**").permitAll()
+
+                        // PUBLIC JOB POSTS (DON'T NEEED TO LOGIN)
+                        .requestMatchers(HttpMethod.GET, "/api/jobPost/**").permitAll()
+
+                        .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception ->
                         exception.authenticationEntryPoint(authenticationEntryPointConfig)

@@ -5,8 +5,10 @@ import com.TalentWorld.backend.dto.response.JobPostResponse;
 import com.TalentWorld.backend.entity.JobPost;
 import com.TalentWorld.backend.entity.User;
 
+import java.util.List;
+
 public interface JobPostService {
-    JobPostResponse getJobPosts();
+    List<JobPostResponse> getJobPosts();
     JobPostResponse getJobPostById(String id);
     JobPostResponse createJobPost(User recurringUser, JobPostCreateRequest request);
 

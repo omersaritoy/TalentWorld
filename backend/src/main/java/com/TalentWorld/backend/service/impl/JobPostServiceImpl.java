@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.TalentWorld.backend.enums.Role.ROLE_RECRUITER;
 
 @Service
@@ -20,13 +23,20 @@ public class JobPostServiceImpl implements JobPostService {
     private final JobPostRepository jobPostRepository;
 
     @Override
-    public JobPostResponse getJobPosts() {
-        return null;
+    public List<JobPostResponse> getJobPosts() {
+        List<JobPost> jobPosts = jobPostRepository.findAll();
+
+        return jobPosts.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
     }
 
     @Override
     public JobPostResponse getJobPostById(String id) {
-        return null;
+        JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> new BusinessException("Job post not found with id: " + id,
+                "JOB_POST_NOT_FOUND",
+                HttpStatus.NOT_FOUND
+        ));
+
+        return JobPostResponse.toDto(jobPost);
     }
 
     @Override
@@ -34,13 +44,12 @@ public class JobPostServiceImpl implements JobPostService {
         if (!recurringUser.getRoles().contains(ROLE_RECRUITER)) {
             throw new BusinessException("User Not RECRUITER", "USER_ROLE_NOT_ALLOWED", HttpStatus.FORBIDDEN);
         }
-        if(request.maxExperienceYear()<request.minExperienceYear()) {
+        if (request.maxExperienceYear() < request.minExperienceYear()) {
             throw new BusinessException("Min experience year can not be bigger than max experience year", "MAX_EXPERIENCE_YEAR", HttpStatus.BAD_REQUEST);
         }
         JobPost jobPost = JobPostCreateRequest.toEntityDto(request);
         jobPost.setUser(recurringUser);
 
         return JobPostResponse.toDto(jobPostRepository.save(jobPost));
-
     }
 }

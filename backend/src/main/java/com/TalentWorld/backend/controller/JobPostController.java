@@ -7,11 +7,11 @@ import com.TalentWorld.backend.service.JobPostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/jobPost")
@@ -21,9 +21,20 @@ public class JobPostController {
     private final JobPostService jobPostService;
 
     @PostMapping
+    @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<JobPostResponse> create(Authentication authentication, @Valid @RequestBody JobPostCreateRequest request) {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(jobPostService.createJobPost(user, request));
+    }
+    @GetMapping
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<List<JobPostResponse>> getAllJobPosts() {
+        return ResponseEntity.ok(jobPostService.getJobPosts());
+    }
+    @GetMapping("/byId/{id}")
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<JobPostResponse> getJobPostById(@PathVariable String  id) {
+        return ResponseEntity.ok(jobPostService.getJobPostById(id));
     }
 
 
