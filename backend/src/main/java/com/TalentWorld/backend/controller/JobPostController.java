@@ -37,5 +37,10 @@ public class JobPostController {
         return ResponseEntity.ok(jobPostService.getJobPostById(id));
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRoles('RECRUITER','ADMIN')")
+    public ResponseEntity<String> deleteJobPostById(@PathVariable String id) {
+        return ResponseEntity.ok(jobPostService.deleteJobPostById(id));
+    }
 
 }

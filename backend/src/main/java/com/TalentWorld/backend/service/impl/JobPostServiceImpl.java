@@ -52,4 +52,14 @@ public class JobPostServiceImpl implements JobPostService {
 
         return JobPostResponse.toDto(jobPostRepository.save(jobPost));
     }
+
+    @Override
+    public String deleteJobPostById(String id) {
+        JobPost jobPost=jobPostRepository.findById(id).orElseThrow(()->new BusinessException(
+                "Job post not found with id: " + id, "JOB_POST_NOT_FOUND",
+                HttpStatus.NOT_FOUND
+        ));
+        jobPostRepository.delete(jobPost);
+        return "Post deleted successfully with id: " + id;
+    }
 }

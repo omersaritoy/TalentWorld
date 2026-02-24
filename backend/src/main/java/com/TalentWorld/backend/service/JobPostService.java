@@ -11,5 +11,6 @@ public interface JobPostService {
     List<JobPostResponse> getJobPosts();
     JobPostResponse getJobPostById(String id);
     JobPostResponse createJobPost(User recurringUser, JobPostCreateRequest request);
+    String deleteJobPostById(String id);
 
 }
