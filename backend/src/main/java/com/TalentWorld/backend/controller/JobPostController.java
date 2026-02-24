@@ -26,19 +26,21 @@ public class JobPostController {
         User user = (User) authentication.getPrincipal();
         return ResponseEntity.ok(jobPostService.createJobPost(user, request));
     }
+
     @GetMapping
     @PreAuthorize("permitAll()")
     public ResponseEntity<List<JobPostResponse>> getAllJobPosts() {
         return ResponseEntity.ok(jobPostService.getJobPosts());
     }
+
     @GetMapping("/byId/{id}")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<JobPostResponse> getJobPostById(@PathVariable String  id) {
+    public ResponseEntity<JobPostResponse> getJobPostById(@PathVariable String id) {
         return ResponseEntity.ok(jobPostService.getJobPostById(id));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRoles('RECRUITER','ADMIN')")
+    @PreAuthorize("hasRole('RECRUITER') or hasRole('ADMIN')")
     public ResponseEntity<String> deleteJobPostById(@PathVariable String id) {
         return ResponseEntity.ok(jobPostService.deleteJobPostById(id));
     }
