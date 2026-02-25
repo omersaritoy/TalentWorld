@@ -53,7 +53,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new BusinessException("User not found with id: " + id,
                 "USER_ID_NOT_FOUND",
                 HttpStatus.NOT_FOUND));
-        userRepository.delete(user);
+        //userRepository.delete(user);
+        //soft delete
+        user.setIsActive(false);
+
         return "User has been deleted by id :" + id;
     }
 
