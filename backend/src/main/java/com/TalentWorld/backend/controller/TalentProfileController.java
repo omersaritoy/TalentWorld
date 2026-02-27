@@ -4,7 +4,6 @@ import com.TalentWorld.backend.dto.request.TalentProfilePatchRequest;
 import com.TalentWorld.backend.dto.request.TalentProfileRequest;
 import com.TalentWorld.backend.dto.response.TalentProfileResponse;
 import com.TalentWorld.backend.entity.User;
-import com.TalentWorld.backend.repository.TalentProfileRepository;
 import com.TalentWorld.backend.service.TalentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

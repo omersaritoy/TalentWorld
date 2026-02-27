@@ -1,6 +1,7 @@
 package com.TalentWorld.backend.controller;
 
 import com.TalentWorld.backend.dto.request.JobPostCreateRequest;
+import com.TalentWorld.backend.dto.request.JobPostUpdateRequest;
 import com.TalentWorld.backend.dto.response.JobPostResponse;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.service.JobPostService;
@@ -37,6 +38,16 @@ public class JobPostController {
     @PreAuthorize("permitAll()")
     public ResponseEntity<JobPostResponse> getJobPostById(@PathVariable String id) {
         return ResponseEntity.ok(jobPostService.getJobPostById(id));
+    }
+    @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('RECRUITER')")
+    public ResponseEntity<JobPostResponse> update(
+            @PathVariable String id,
+            Authentication authentication,
+            @RequestBody JobPostUpdateRequest request
+    ) {
+        User user = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(jobPostService.updateJobPost(user, request, id));
     }
 
     @DeleteMapping("/{id}")
