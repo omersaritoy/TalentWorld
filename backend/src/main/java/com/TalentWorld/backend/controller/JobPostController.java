@@ -39,6 +39,7 @@ public class JobPostController {
     public ResponseEntity<JobPostResponse> getJobPostById(@PathVariable String id) {
         return ResponseEntity.ok(jobPostService.getJobPostById(id));
     }
+
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('RECRUITER')")
     public ResponseEntity<JobPostResponse> update(

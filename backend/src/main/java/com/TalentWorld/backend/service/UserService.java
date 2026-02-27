@@ -1,7 +1,11 @@
 package com.TalentWorld.backend.service;
 
 
+import com.TalentWorld.backend.dto.request.JobApplicationCreateRequest;
+import com.TalentWorld.backend.dto.request.JobApplicationStatusUpdateRequest;
 import com.TalentWorld.backend.dto.request.UserUpdate;
+import com.TalentWorld.backend.dto.response.JobApplicationResponse;
+import com.TalentWorld.backend.dto.response.MyApplicationResponse;
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.entity.User;
 
@@ -18,3 +22,5 @@ public interface UserService {
     UserResponse updateUser(UserUpdate userUpdate, String id);
     UserResponse changeEmailById(String email, String id);
 }
+
+

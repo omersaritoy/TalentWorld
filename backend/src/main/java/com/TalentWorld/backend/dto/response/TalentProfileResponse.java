@@ -1,7 +1,10 @@
 package com.TalentWorld.backend.dto.response;
 
+import com.TalentWorld.backend.entity.JobApplication;
 import com.TalentWorld.backend.entity.TalentProfile;
+import com.TalentWorld.backend.enums.ApplicationStatus;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public record TalentProfileResponse(

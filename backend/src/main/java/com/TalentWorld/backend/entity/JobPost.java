@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -56,6 +57,9 @@ public class JobPost extends BaseEntity {
     private WorkType workType= WorkType.ONSITE;
 
     private Boolean isActive = true;
+
+    @OneToMany(mappedBy = "jobPost", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<JobApplication> applications;
 
 }
 
