@@ -1,6 +1,7 @@
 package com.TalentWorld.backend.dto.request;
 
 import com.TalentWorld.backend.entity.TalentProfile;
+import com.TalentWorld.backend.enums.Role;
 
 import java.util.List;
 import java.util.Set;
@@ -18,4 +19,3 @@ public record TalentProfileRequest(
         profile.setSkills(skills);
     }
 }
-
