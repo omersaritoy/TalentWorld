@@ -1,5 +1,10 @@
 package com.TalentWorld.backend.service.impl;
 
+import com.TalentWorld.backend.dto.request.UserFilterRequest;
+import com.TalentWorld.backend.filter.UserFilter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,6 +97,12 @@ public class UserServiceImpl implements UserService {
         user.setEmail(normalizedEmail);
 
         return UserResponse.toDto(user);
+    }
+
+    @Override
+    public Page<User> search(UserFilterRequest request, Pageable pageable) {
+        Specification<User> spec = UserFilter.filter(request);
+        return userRepository.findAll(spec, pageable);
     }
 
     @Override

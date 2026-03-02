@@ -1,14 +1,14 @@
 package com.TalentWorld.backend.service;
 
 
-import com.TalentWorld.backend.dto.request.JobApplicationCreateRequest;
-import com.TalentWorld.backend.dto.request.JobApplicationStatusUpdateRequest;
+
+import com.TalentWorld.backend.dto.request.UserFilterRequest;
 import com.TalentWorld.backend.dto.request.UserUpdate;
-import com.TalentWorld.backend.dto.response.JobApplicationResponse;
-import com.TalentWorld.backend.dto.response.MyApplicationResponse;
+
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.entity.User;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 
@@ -21,7 +21,7 @@ public interface UserService {
     String deleteUserById(String id);
     UserResponse updateUser(UserUpdate userUpdate, String id);
     UserResponse changeEmailById(String email, String id);
-
+    Page<User> search(UserFilterRequest request, Pageable pageable);
 }
 
 

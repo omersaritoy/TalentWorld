@@ -1,16 +1,19 @@
 package com.TalentWorld.backend.controller;
 
+import com.TalentWorld.backend.dto.request.UserFilterRequest;
 import com.TalentWorld.backend.dto.request.UserUpdate;
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.service.UserService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @RestController
@@ -72,6 +75,15 @@ public class UserController {
         if(currentUser==null)
             throw new BusinessException("User Not Found","USER_NOT_FOUND", HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(UserResponse.toDto(currentUser));
+    }
+
+    @PostMapping("/search")
+    @PreAuthorize("isAuthenticated()")
+    public Page<User> search(
+            @RequestBody UserFilterRequest request,
+            Pageable pageable
+    ) {
+        return userService.search(request, pageable);
     }
 
 }
