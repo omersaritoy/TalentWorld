@@ -21,7 +21,6 @@ public interface UserService {
     String deleteUserById(String id);
     UserResponse updateUser(UserUpdate userUpdate, String id);
     UserResponse changeEmailById(String email, String id);
-    Page<User> search(UserFilterRequest request, Pageable pageable);
 }
 
 

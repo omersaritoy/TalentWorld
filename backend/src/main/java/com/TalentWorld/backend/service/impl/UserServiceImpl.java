@@ -99,11 +99,6 @@ public class UserServiceImpl implements UserService {
         return UserResponse.toDto(user);
     }
 
-    @Override
-    public Page<User> search(UserFilterRequest request, Pageable pageable) {
-        Specification<User> spec = UserFilter.filter(request);
-        return userRepository.findAll(spec, pageable);
-    }
 
     @Override
     public UserResponse getUsrByEmail(String email) {
