@@ -6,10 +6,10 @@ import com.TalentWorld.backend.entity.JobApplication;
 import com.TalentWorld.backend.entity.JobPost;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.enums.ApplicationStatus;
-import com.TalentWorld.backend.enums.Role;
+
 import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.repository.*;
-import com.TalentWorld.backend.repository.*;
+
 import com.TalentWorld.backend.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

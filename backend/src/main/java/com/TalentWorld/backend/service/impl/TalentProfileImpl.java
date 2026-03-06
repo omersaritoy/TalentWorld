@@ -8,9 +8,8 @@ import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.repository.TalentProfileRepository;
 import com.TalentWorld.backend.service.TalentService;
-import com.TalentWorld.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.NotFound;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

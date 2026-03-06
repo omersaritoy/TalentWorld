@@ -4,7 +4,7 @@ import com.TalentWorld.backend.dto.request.SignInRequest;
 import com.TalentWorld.backend.dto.request.SignupRequest;
 import com.TalentWorld.backend.dto.response.AuthResponse;
 import com.TalentWorld.backend.entity.User;
-import com.TalentWorld.backend.enums.Role;
+
 import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.repository.UserRepository;
 
