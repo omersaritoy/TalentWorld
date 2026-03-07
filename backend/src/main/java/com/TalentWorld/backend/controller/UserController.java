@@ -2,6 +2,8 @@ package com.TalentWorld.backend.controller;
 
 
 import com.TalentWorld.backend.dto.request.UserUpdate;
+import com.TalentWorld.backend.dto.response.PaginationResponse;
+
 import com.TalentWorld.backend.dto.response.UserResponse;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.excepiton.BusinessException;
@@ -31,13 +33,33 @@ public class UserController {
         return ResponseEntity.ok(userService.getUsers());
     }
 
+    @GetMapping("/{field}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PaginationResponse<UserResponse>> getUsersWithSort(@PathVariable String field) {
+        return ResponseEntity.ok(userService.findUserWithShorting(field));
+    }
+
+    @GetMapping("/pagination")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PaginationResponse<UserResponse>> getUsersWithSort(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok(userService.findUsersWithPagination(page, pageSize));
+    }
+
+    @GetMapping("/pagination/pageAndSort")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PaginationResponse<UserResponse>> getUsersWithSort(
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestParam String field) {
+        return ResponseEntity.ok(userService.findUsersWithPaginationAndSort(page, pageSize, field));
+    }
+
     @GetMapping("/getByEmail/{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
         return ResponseEntity.ok(userService.getUsrByEmail(email));
     }
 
-        @GetMapping("/activeUsers")
+    @GetMapping("/activeUsers")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getActiveUsers() {
         return ResponseEntity.ok(userService.getActiveUsers());
@@ -71,8 +93,8 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> me(Authentication authentication) {
         User currentUser = (User) authentication.getPrincipal();
-        if(currentUser==null)
-            throw new BusinessException("User Not Found","USER_NOT_FOUND", HttpStatus.NOT_FOUND);
+        if (currentUser == null)
+            throw new BusinessException("User Not Found", "USER_NOT_FOUND", HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(UserResponse.toDto(currentUser));
     }
 //

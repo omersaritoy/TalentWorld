@@ -3,6 +3,7 @@ package com.TalentWorld.backend.dto.response;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.enums.Role;
 
+import java.util.List;
 import java.util.Set;
 
 public record UserResponse(String id, String firstName, String lastName, String email, Boolean isActive,

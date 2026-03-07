@@ -1,6 +1,11 @@
 package com.TalentWorld.backend.service.impl;
 
 
+import com.TalentWorld.backend.dto.response.PaginationResponse;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,6 +98,36 @@ public class UserServiceImpl implements UserService {
         user.setEmail(normalizedEmail);
 
         return UserResponse.toDto(user);
+    }
+
+    @Override
+    public PaginationResponse<UserResponse> findUserWithShorting(String field) {
+        List<User> users = userRepository.findAll(Sort.by(Sort.Direction.ASC, field));
+
+        List<UserResponse> userResponseList = users.stream().map(UserResponse::toDto).toList();
+
+        return new PaginationResponse<>(users.size(), userResponseList);
+    }
+
+    @Override
+    public PaginationResponse<UserResponse> findUsersWithPagination(int page, int pageSize) {
+        Page<User> userPage = userRepository.findAll(PageRequest.of(page, pageSize));
+        List<UserResponse> users = userPage.getContent()
+                .stream()
+                .map(UserResponse::toDto)
+                .toList();
+
+        return new PaginationResponse<>(userPage.getTotalElements(), users);
+    }
+
+    @Override
+    public PaginationResponse<UserResponse> findUsersWithPaginationAndSort(int page, int pageSize, String field) {
+        Page<User> userPage = userRepository.findAll(PageRequest.of(page, pageSize, Sort.by(Sort.Direction.ASC, field)));
+        List<UserResponse> users = userPage.getContent()
+                .stream()
+                .map(UserResponse::toDto)
+                .toList();
+        return new PaginationResponse<>(userPage.getTotalElements(), users);
     }
 
 
