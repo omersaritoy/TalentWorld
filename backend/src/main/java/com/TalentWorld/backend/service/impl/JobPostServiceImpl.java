@@ -3,6 +3,7 @@ package com.TalentWorld.backend.service.impl;
 import com.TalentWorld.backend.dto.request.JobPostCreateRequest;
 import com.TalentWorld.backend.dto.request.JobPostUpdateRequest;
 import com.TalentWorld.backend.dto.response.JobPostResponse;
+import com.TalentWorld.backend.dto.response.PaginationResponse;
 import com.TalentWorld.backend.entity.JobPost;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.enums.Role;
@@ -11,6 +12,9 @@ import com.TalentWorld.backend.repository.JobPostRepository;
 import com.TalentWorld.backend.service.JobPostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -93,5 +97,26 @@ public class JobPostServiceImpl implements JobPostService {
         ));
         jobPostRepository.delete(jobPost);
         return "Post deleted successfully with id: " + id;
+    }
+
+    @Override
+    public PaginationResponse<JobPostResponse> findJobsWithSort(String filed) {
+        List<JobPost> jobPosts=jobPostRepository.findAll(Sort.by(Sort.Direction.ASC,filed));
+        List<JobPostResponse> response=jobPosts.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
+        return new PaginationResponse<>(response.size(),response);
+    }
+
+    @Override
+    public PaginationResponse<JobPostResponse> findJobsWithPage(int page, int size) {
+        Page<JobPost> pageJobs=jobPostRepository.findAll(PageRequest.of(page,size));
+        List<JobPostResponse> response=pageJobs.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
+        return new  PaginationResponse<>(response.size(),response);
+    }
+
+    @Override
+    public PaginationResponse<JobPostResponse> findJobsWithPageAndSort(String filed, int page, int size) {
+        Page<JobPost> pageJobs=jobPostRepository.findAll(PageRequest.of(page,size,Sort.by(Sort.Direction.ASC,filed)));
+        List<JobPostResponse> response=pageJobs.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
+        return new  PaginationResponse<>(response.size(),response);
     }
 }

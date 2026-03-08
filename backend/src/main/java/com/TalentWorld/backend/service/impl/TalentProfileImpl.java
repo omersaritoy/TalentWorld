@@ -2,6 +2,7 @@ package com.TalentWorld.backend.service.impl;
 
 import com.TalentWorld.backend.dto.request.TalentProfilePatchRequest;
 import com.TalentWorld.backend.dto.request.TalentProfileRequest;
+import com.TalentWorld.backend.dto.response.PaginationResponse;
 import com.TalentWorld.backend.dto.response.TalentProfileResponse;
 import com.TalentWorld.backend.entity.TalentProfile;
 import com.TalentWorld.backend.entity.User;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -57,4 +60,6 @@ public class TalentProfileImpl implements TalentService {
         request.applyTo(profile);
         return TalentProfileResponse.toDto(profile);
     }
+
+
 }
