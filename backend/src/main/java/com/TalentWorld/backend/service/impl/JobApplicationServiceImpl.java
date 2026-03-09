@@ -13,11 +13,15 @@ import com.TalentWorld.backend.repository.*;
 import com.TalentWorld.backend.service.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.TalentWorld.backend.enums.Role.ROLE_ADMIN;
 import static com.TalentWorld.backend.enums.Role.ROLE_USER;
@@ -158,6 +162,29 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         application.setStatus(request.status());
 
         return JobApplicationResponse.toDto(application);
+    }
+
+    @Override
+    public PaginationResponse<JobApplicationResponse> findJobApplicationsWithSort(String filed) {
+        List<JobApplication> applications=jobApplicationRepository.findAll(Sort.by(Sort.Direction.DESC, filed));
+        List<JobApplicationResponse> jobApplicationResponses=applications.stream().map(JobApplicationResponse::toDto).toList();
+        return new  PaginationResponse<>(applications.size(),jobApplicationResponses);
+    }
+
+    @Override
+    public PaginationResponse<JobApplicationResponse> findJobApplicationsWithPage(int page, int size) {
+        Page<JobApplication> applications=jobApplicationRepository.findAll(PageRequest.of(page,size));
+        List<JobApplicationResponse>  jobApplicationResponses=applications.stream().map(JobApplicationResponse::toDto).toList();
+        return new PaginationResponse<>(jobApplicationResponses.size(),jobApplicationResponses);
+    }
+
+    @Override
+    public PaginationResponse<JobApplicationResponse> findApplicationsWithPageAndSort(String filed, int page, int size) {
+        Page<JobApplication> applications=jobApplicationRepository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.DESC, filed)));
+        List<JobApplicationResponse> jobApplicationResponses=applications.stream().map(JobApplicationResponse::toDto).toList();
+
+        return new PaginationResponse<>(jobApplicationResponses.size(),jobApplicationResponses);
+
     }
 
 }

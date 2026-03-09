@@ -4,6 +4,7 @@ import com.TalentWorld.backend.dto.request.JobApplicationCreateRequest;
 import com.TalentWorld.backend.dto.request.JobApplicationStatusUpdateRequest;
 import com.TalentWorld.backend.dto.response.JobApplicationResponse;
 import com.TalentWorld.backend.dto.response.MyApplicationResponse;
+import com.TalentWorld.backend.dto.response.PaginationResponse;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.service.JobApplicationService;
 import jakarta.validation.Valid;
@@ -32,6 +33,7 @@ public class JobApplicationController {
                 jobApplicationService.applyToJob(jobPostId, user, request)
         );
     }
+
     @GetMapping("/job-posts/{jobPostId}")
     @PreAuthorize("hasRole('RECRUITER') or hasRole('ADMIN')")
     public ResponseEntity<List<JobApplicationResponse>> getApplicationsForJob(
@@ -42,6 +44,7 @@ public class JobApplicationController {
                 jobApplicationService.getApplicationsForJob(jobPostId, user)
         );
     }
+
     @GetMapping("/my")
     @PreAuthorize("hasRole('TALENT')")
     public ResponseEntity<List<MyApplicationResponse>> getMyApplications(
@@ -51,6 +54,29 @@ public class JobApplicationController {
                 jobApplicationService.getMyApplications(user)
         );
     }
+
+    @GetMapping()
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<PaginationResponse<JobApplicationResponse>> getJobApplicationsWithSort(@RequestParam String field) {
+        return ResponseEntity.ok(jobApplicationService.findJobApplicationsWithSort(field));
+    }
+
+    @GetMapping()
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<PaginationResponse<JobApplicationResponse>> getJobApplicationsWithSort(@RequestParam(defaultValue = "0") int page,
+                                                                                                 @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(jobApplicationService.findJobApplicationsWithPage(page, size));
+    }
+
+    @GetMapping()
+    @PreAuthorize("permitAll()")
+    public ResponseEntity<PaginationResponse<JobApplicationResponse>> getJobApplicationsWithPageAndSort(
+            @RequestParam String field, @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(jobApplicationService.findApplicationsWithPageAndSort(field, page, size));
+    }
+
+
     @PatchMapping("/{applicationId}/status")
     @PreAuthorize("hasRole('RECRUITER') or hasRole('ADMIN')")
     public ResponseEntity<JobApplicationResponse> updateStatus(
