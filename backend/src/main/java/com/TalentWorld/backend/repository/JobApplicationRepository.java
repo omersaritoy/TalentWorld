@@ -7,10 +7,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface JobApplicationRepository extends JpaRepository<JobApplication,String> {
+public interface JobApplicationRepository extends JpaRepository<JobApplication, String> {
 
     boolean existsByJobPostAndTalent(JobPost jobPost, User talent);
 
     List<JobApplication> findByJobPost(JobPost jobPost);
 
-    List<JobApplication> findByTalent(User talent);}
+    List<JobApplication> findByTalent(User talent);
+
+}
