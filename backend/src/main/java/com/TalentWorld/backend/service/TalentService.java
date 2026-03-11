@@ -12,5 +12,6 @@ public interface TalentService {
     TalentProfileResponse getMyProfile(User currentUser);
     TalentProfileResponse createProfile(User currentUser, TalentProfileRequest request);
     TalentProfileResponse updateProfile(User currentUser, TalentProfilePatchRequest request);
+    String deleteProfile(User currentUser, String talentProfileId);
 }
 

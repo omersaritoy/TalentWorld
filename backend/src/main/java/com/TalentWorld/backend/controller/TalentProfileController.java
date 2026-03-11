@@ -43,4 +43,10 @@ public class TalentProfileController {
         User currentUser = (User) auth.getPrincipal();
         return ResponseEntity.ok(talentService.updateProfile(currentUser, request));
     }
+    @DeleteMapping("/{talentProfileId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<String> deleteTalentProfile(Authentication authentication, @PathVariable String talentProfileId) {
+        User currentUser = (User) authentication.getPrincipal();
+        return ResponseEntity.ok(talentService.deleteProfile(currentUser, talentProfileId));
+    }
 }
