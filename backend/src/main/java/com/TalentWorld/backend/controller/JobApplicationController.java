@@ -57,25 +57,16 @@ public class JobApplicationController {
 
     @GetMapping()
     @PreAuthorize("permitAll()")
-    public ResponseEntity<PaginationResponse<JobApplicationResponse>> getJobApplicationsWithSort(@RequestParam String field) {
-        return ResponseEntity.ok(jobApplicationService.findJobApplicationsWithSort(field));
-    }
+    public ResponseEntity<PaginationResponse<JobApplicationResponse>> getJobApplications(
+            @RequestParam(required = false) String field,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<PaginationResponse<JobApplicationResponse>> getJobApplicationsWithSort(@RequestParam(defaultValue = "0") int page,
-                                                                                                 @RequestParam(defaultValue = "10") int size) {
+        if (field != null && !field.isEmpty()) {
+            return ResponseEntity.ok(jobApplicationService.findApplicationsWithPageAndSort(field, page, size));
+        }
         return ResponseEntity.ok(jobApplicationService.findJobApplicationsWithPage(page, size));
     }
-
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<PaginationResponse<JobApplicationResponse>> getJobApplicationsWithPageAndSort(
-            @RequestParam String field, @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(jobApplicationService.findApplicationsWithPageAndSort(field, page, size));
-    }
-
 
     @PatchMapping("/{applicationId}/status")
     @PreAuthorize("hasRole('RECRUITER') or hasRole('ADMIN')")

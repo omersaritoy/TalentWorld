@@ -12,11 +12,33 @@ spring:
       ddl-auto: update
 logging:
   level:
-    root: DEBUG
+    root: info
+    org:
+      springframework:
+        security: warn
+      hibernate: error
+    com:
+      TalentWorld:
+        backend:
+          controller: info
+          service: debug
+          repository: off
+  file:
+    name: logs/app.log
+  logback:
+    rolling policy:
+      file-name-pattern: logs/app.%d{yyyy-MM-dd}.%i.log.gz
+      max-file-size: 10MB
+      max-history: 30
+      total-size-cap: 1GB
+  pattern:
+    #console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+
 jwt:
   secret: ${JWT_SECRET_KEY}
   expiration: 3600000
-
 
 
 server:

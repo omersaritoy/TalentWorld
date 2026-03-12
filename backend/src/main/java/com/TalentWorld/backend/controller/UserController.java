@@ -9,6 +9,8 @@ import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.service.UserService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +23,6 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -30,6 +31,7 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getUsers() {
+
         return ResponseEntity.ok(userService.getUsers());
     }
 
@@ -50,48 +52,56 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PaginationResponse<UserResponse>> getUsersWithSort(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestParam String field) {
+
         return ResponseEntity.ok(userService.findUsersWithPaginationAndSort(page, pageSize, field));
     }
 
     @GetMapping("/getByEmail/{email}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
+
         return ResponseEntity.ok(userService.getUsrByEmail(email));
     }
 
     @GetMapping("/activeUsers")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getActiveUsers() {
+
         return ResponseEntity.ok(userService.getActiveUsers());
     }
 
     @GetMapping("/inActiveUsers")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponse>> getInActiveUsers() {
+
         return ResponseEntity.ok(userService.getInActiveUsers());
     }
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteUserById(@PathVariable String id) {
+
         return ResponseEntity.ok(userService.deleteUserById(id));
     }
 
     @PatchMapping("/updateUser/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId==authentication.principal.id")
     public ResponseEntity<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdate userUpdate) {
+
         return ResponseEntity.ok(userService.updateUser(userUpdate, userId));
     }
 
     @PatchMapping("/changeEmailById/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId==authentication.principal.id")
     public ResponseEntity<UserResponse> changeEmailById(@PathVariable String userId, @RequestBody String email) {
+
         return ResponseEntity.ok(userService.changeEmailById(email, userId));
     }
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserResponse> me(Authentication authentication) {
+
         User currentUser = (User) authentication.getPrincipal();
         if (currentUser == null)
             throw new BusinessException("User Not Found", "USER_NOT_FOUND", HttpStatus.NOT_FOUND);

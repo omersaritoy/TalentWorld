@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -65,15 +66,25 @@ public class TalentProfileImpl implements TalentService {
 
     @Override
     public String deleteProfile(User currentUser,String talentProfileId) {
-        User talent = userRepository.findById(currentUser.getId()).orElseThrow(
-                () -> new BusinessException(
-                        "Profile not Found",
+
+        TalentProfile talentProfile = repository.findById(talentProfileId)
+                .orElseThrow(() -> new BusinessException(
+                        "Talent Profile not found",
                         "PROFILE_NOT_FOUND",
                         HttpStatus.NOT_FOUND
-
                 ));
-        repository.delete(talentProfileId);
+        boolean isAdmin = currentUser.getAuthorities().stream()
+                .anyMatch(a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"));
 
+        if (!isAdmin && !talentProfile.getUser().getId().equals(currentUser.getId())) {
+            throw new BusinessException(
+                    "You are not authorized to delete this profile",
+                    "UNAUTHORIZED",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+
+        repository.delete(talentProfile);
         return "Talent Profile Deleted Successfully by id: " + talentProfileId;
     }
 

@@ -31,25 +31,23 @@ public class JobPostController {
 
     @GetMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity<List<JobPostResponse>> getAllJobPosts() {
-        return ResponseEntity.ok(jobPostService.getJobPosts());
-    }
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<PaginationResponse<JobPostResponse>> getAllJobPostsWithSort(@RequestParam String filed) {
-        return ResponseEntity.ok(jobPostService.findJobsWithSort(filed));
-    }
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<PaginationResponse<JobPostResponse>> getAllJobPostsWithPage(@RequestParam(defaultValue = "0") int page,
-                                                                                      @RequestParam(defaultValue = "10") int size) {
-        return ResponseEntity.ok(jobPostService.findJobsWithPage(page, size));
-    }
-    @GetMapping()
-    @PreAuthorize("permitAll()")
-    public ResponseEntity<PaginationResponse<JobPostResponse>> getAllJobPostsWithPageAndSort(@RequestParam String filed,
-    @RequestParam(defaultValue = "0")int page,  @RequestParam(defaultValue = "10")int size) {
-        return ResponseEntity.ok(jobPostService.findJobsWithPageAndSort(filed, page, size));
+    public ResponseEntity<?> getAllJobPosts(
+            @RequestParam(required = false) String field,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size) {
+
+
+        if (field == null && page == null && size == null) {
+            return ResponseEntity.ok(jobPostService.getJobPosts());
+        }
+
+        int p = (page != null) ? page : 0;
+        int s = (size != null) ? size : 10;
+
+        if (field != null && !field.isEmpty()) {
+            return ResponseEntity.ok(jobPostService.findJobsWithPageAndSort(field, p, s));
+        }
+        return ResponseEntity.ok(jobPostService.findJobsWithPage(p, s));
     }
 
     @GetMapping("/byId/{id}")

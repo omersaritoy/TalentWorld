@@ -3,6 +3,7 @@ package com.TalentWorld.backend.service.impl;
 
 import com.TalentWorld.backend.dto.response.PaginationResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -33,6 +36,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getUsers() {
         List<User> users = userRepository.findAll();
+        log.info("Tüm kullanıcılar getirildi: toplam={}", users.size());
         return users.stream().map(UserResponse::toDto).toList();
     }
 
@@ -40,8 +44,10 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getActiveUsers() {
         List<User> users = userRepository.findByIsActive(true);
         if (users.isEmpty()) {
+            log.warn("Aktif kullanıcı bulunamadı");
             throw new BusinessException("Active Users not found", "Users Not Found", HttpStatus.NOT_FOUND);
         }
+        log.info("Aktif kullanıcılar getirildi: toplam={}", users.size());
         return users.stream().map(UserResponse::toDto).toList();
     }
 
@@ -49,56 +55,59 @@ public class UserServiceImpl implements UserService {
     public List<UserResponse> getInActiveUsers() {
         List<User> users = userRepository.findByIsActive(false);
         if (users.isEmpty()) {
+            log.warn("Pasif kullanıcı bulunamadı");
+
             throw new BusinessException("inactive Users not found", "Users Not Found", HttpStatus.NOT_FOUND);
         }
+        log.info("Pasif kullanıcılar getirildi: toplam={}", users.size());
         return users.stream().map(UserResponse::toDto).toList();
     }
 
     @Override
     public String deleteUserById(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new BusinessException("User not found with id: " + id,
-                "USER_ID_NOT_FOUND",
-                HttpStatus.NOT_FOUND));
-        //userRepository.delete(user);
-        //soft delete
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            log.warn("Silinecek kullanıcı bulunamadı: id={}", id);
+            return new BusinessException("User not found with id: " + id,
+                    "USER_ID_NOT_FOUND",
+                    HttpStatus.NOT_FOUND);
+        });
         user.setIsActive(false);
-
+        log.info("Kullanıcı soft-delete yapıldı: id={}", id);
         return "User has been deleted by id :" + id;
     }
 
     @Override
     public UserResponse updateUser(UserUpdate userUpdate, String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new BusinessException("User not found with id: " + id,
-                "USER_ID_NOT_FOUND",
-                HttpStatus.NOT_FOUND));
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            log.warn("Silinecek kullanıcı bulunamadı: id={}", id);
+            return new BusinessException("User not found with id: " + id,
+                    "USER_ID_NOT_FOUND",
+                    HttpStatus.NOT_FOUND);
+        });
         checkPermission(id);//check user roles--> admin or owner
         userUpdate.applyTo(user);
-
+        log.info("Kullanıcı güncellendi: id={}", id);
         return UserResponse.toDto(userRepository.save(user));
     }
-
-    @Override
-    @Transactional
     public UserResponse changeEmailById(String email, String id) {
-
+        log.info("Email değiştirme isteği: id={}", id);
         checkPermission(id);
-
         validateEmail(email);
 
         User user = getUserById(id);
-
         String normalizedEmail = normalizeEmail(email);
 
         if (user.getEmail().equals(normalizedEmail)) {
+            log.debug("Yeni email mevcut emaille aynı, değişiklik yapılmadı: id={}", id);
             return UserResponse.toDto(user);
         }
 
         checkEmailUniqueness(normalizedEmail);
-
         user.setEmail(normalizedEmail);
-
+        log.info("Email başarıyla değiştirildi: id={}", id);
         return UserResponse.toDto(user);
     }
+
 
     @Override
     public PaginationResponse<UserResponse> findUserWithShorting(String field) {

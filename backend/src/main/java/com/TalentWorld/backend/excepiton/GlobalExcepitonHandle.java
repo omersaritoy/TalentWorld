@@ -7,11 +7,15 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.naming.AuthenticationException;
 import java.time.LocalDateTime;
+import java.util.logging.Logger;
 
 @RestControllerAdvice
 @Slf4j
 public class GlobalExcepitonHandle {
+
+    private static final Logger logger = Logger.getLogger(GlobalExcepitonHandle.class.getName());
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException ex, WebRequest webRequest) {
@@ -28,6 +32,13 @@ public class GlobalExcepitonHandle {
 
         return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> handleAuthException(AuthenticationException e) {
+        logger.warning("Authentication error: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(
             Exception ex,

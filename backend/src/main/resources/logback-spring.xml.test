@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+
+<configuration>
+
+<!--    <property name="logs" value="logs"/>-->
+
+<!--    &lt;!&ndash; Normal loglar &ndash;&gt;-->
+<!--    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+
+<!--        <file>logs/app.log</file>-->
+
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>logs/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--        </rollingPolicy>-->
+
+<!--        <encoder>-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+
+<!--    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+
+<!--        <file>logs/error.log</file>-->
+
+<!--        <filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+<!--            <level>ERROR</level>-->
+<!--            <onMatch>ACCEPT</onMatch>-->
+<!--            <onMismatch>DENY</onMismatch>-->
+<!--        </filter>-->
+
+<!--        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+<!--            <fileNamePattern>logs/error.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>-->
+<!--            <maxFileSize>10MB</maxFileSize>-->
+<!--            <maxHistory>30</maxHistory>-->
+<!--        </rollingPolicy>-->
+
+<!--        <encoder>-->
+<!--            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger - %msg%n</pattern>-->
+<!--        </encoder>-->
+
+<!--    </appender>-->
+
+<!--    <root level="INFO">-->
+<!--        <appender-ref ref="FILE"/>-->
+<!--        <appender-ref ref="ERROR_FILE"/>-->
+<!--    </root>-->
+
+
+</configuration>

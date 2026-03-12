@@ -1,0 +1,18 @@
+
+#Logging#
+-logs should be asynchronous
+- must don't use printStackTrace ve System.out.println() because disrupts log structure (format(format can change in product or other steps))
+-should be sensitive data (must don't use identity,email or special information)
+-All logs should be collected in a central location and be in a specific format.
+-Level should be used carefully.
+-The different Levels and The different appends can be use
+
+TRACE->DEBUG->INFO->WARN->ERROR->OFF
+
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36}
+
+
+
+
+
+

@@ -10,6 +10,4 @@ public interface TalentProfileRepository extends JpaRepository<TalentProfile, St
     Optional<TalentProfile> findByUserId(String userId);
 
     boolean existsByUserId(String userId);
-
-    void delete(String talentProfileId);
 }
