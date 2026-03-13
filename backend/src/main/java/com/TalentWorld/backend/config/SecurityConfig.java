@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         // AUTH
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
 
                         // PUBLIC JOB POSTS (DON'T NEEED TO LOGIN)
                         .requestMatchers(HttpMethod.GET, "/api/jobPost/**").permitAll()

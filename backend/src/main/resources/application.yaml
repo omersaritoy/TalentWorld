@@ -34,7 +34,10 @@ logging:
   pattern:
     #console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
-
+management:
+  endpoint:
+    health:
+      show-details: always
 
 jwt:
   secret: ${JWT_SECRET_KEY}

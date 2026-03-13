@@ -12,6 +12,7 @@ import com.TalentWorld.backend.repository.JobPostRepository;
 import com.TalentWorld.backend.service.JobPostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,9 +23,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.TalentWorld.backend.enums.Role.ROLE_RECRUITER;
-
 @Service
 @RequiredArgsConstructor
+@Transactional
+@Slf4j
 public class JobPostServiceImpl implements JobPostService {
 
     private final JobPostRepository jobPostRepository;
@@ -32,91 +34,109 @@ public class JobPostServiceImpl implements JobPostService {
     @Override
     public List<JobPostResponse> getJobPosts() {
         List<JobPost> jobPosts = jobPostRepository.findAll();
-
+        log.info("İş ilanları getirildi: toplam={}", jobPosts.size());
         return jobPosts.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
     }
 
     @Override
     public JobPostResponse getJobPostById(String id) {
-        JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> new BusinessException("Job post not found with id: " + id,
-                "JOB_POST_NOT_FOUND",
-                HttpStatus.NOT_FOUND
-        ));
-
+        JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> {
+            log.warn("İş ilanı bulunamadı: id={}", id);
+            return new BusinessException("Job post not found with id: " + id,
+                    "JOB_POST_NOT_FOUND",
+                    HttpStatus.NOT_FOUND
+            );
+        });
+        log.info("İş ilanı getirildi: id={}", id);
         return JobPostResponse.toDto(jobPost);
     }
 
     @Override
     public JobPostResponse createJobPost(User recurringUser, JobPostCreateRequest request) {
+        log.info("İş ilanı oluşturma isteği: userId={}", recurringUser.getId());
+
         if (!recurringUser.getRoles().contains(ROLE_RECRUITER)) {
+            log.warn("Yetkisiz ilan oluşturma girişimi: userId={}, roles={}",
+                    recurringUser.getId(), recurringUser.getRoles());
             throw new BusinessException("User Not RECRUITER", "USER_ROLE_NOT_ALLOWED", HttpStatus.FORBIDDEN);
         }
+
         if (request.maxExperienceYear() < request.minExperienceYear()) {
-            throw new BusinessException("Min experience year can not be bigger than max experience year", "MAX_EXPERIENCE_YEAR", HttpStatus.BAD_REQUEST);
+            log.warn("Geçersiz deneyim yılı aralığı: min={}, max={}",
+                    request.minExperienceYear(), request.maxExperienceYear());
+            throw new BusinessException("Min experience year can not be bigger than max experience year",
+                    "MAX_EXPERIENCE_YEAR", HttpStatus.BAD_REQUEST);
         }
+
         JobPost jobPost = JobPostCreateRequest.toEntityDto(request);
         jobPost.setUser(recurringUser);
+        JobPost saved = jobPostRepository.save(jobPost);
 
-        return JobPostResponse.toDto(jobPostRepository.save(jobPost));
+        log.info("İş ilanı oluşturuldu: id={}, userId={}", saved.getId(), recurringUser.getId());
+        return JobPostResponse.toDto(saved);
     }
+
     @Override
     @Transactional
-    public JobPostResponse updateJobPost(
-            User currentUser,
-            JobPostUpdateRequest request,
-            String id
-    ) {
-        JobPost jobPost = jobPostRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(
-                        "Job post not found with id: " + id,
-                        "JOB_POST_NOT_FOUND",
-                        HttpStatus.NOT_FOUND
-                ));
+    public JobPostResponse updateJobPost(User currentUser, JobPostUpdateRequest request, String id) {
+        log.info("İş ilanı güncelleme isteği: id={}, userId={}", id, currentUser.getId());
+
+        JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> {
+            log.warn("Güncellenecek ilan bulunamadı: id={}", id);
+            return new BusinessException("Job post not found with id: " + id,
+                    "JOB_POST_NOT_FOUND", HttpStatus.NOT_FOUND);
+        });
+
         boolean isOwner = jobPost.getUser().getId().equals(currentUser.getId());
         boolean isAdmin = currentUser.getRoles().contains(Role.ROLE_ADMIN);
 
         if (!isOwner && !isAdmin) {
-            throw new BusinessException(
-                    "You are not allowed to update this job post",
-                    "ACCESS_DENIED",
-                    HttpStatus.FORBIDDEN
-            );
+            log.warn("Yetkisiz güncelleme girişimi: id={}, userId={}", id, currentUser.getId());
+            throw new BusinessException("You are not allowed to update this job post",
+                    "ACCESS_DENIED", HttpStatus.FORBIDDEN);
         }
 
         request.applyTo(jobPost);
+        JobPost updated = jobPostRepository.save(jobPost);
 
-
-        return JobPostResponse.toDto(jobPostRepository.save(jobPost));
+        log.info("İş ilanı güncellendi: id={}, userId={}", id, currentUser.getId());
+        return JobPostResponse.toDto(updated);
     }
 
     @Override
     public String deleteJobPostById(String id) {
-        JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> new BusinessException(
-                "Job post not found with id: " + id, "JOB_POST_NOT_FOUND",
-                HttpStatus.NOT_FOUND
-        ));
+        JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> {
+            log.warn("Silinecek ilan bulunamadı: id={}", id);
+            return new BusinessException("Job post not found with id: " + id,
+                    "JOB_POST_NOT_FOUND", HttpStatus.NOT_FOUND);
+        });
+
         jobPostRepository.delete(jobPost);
+        log.info("İş ilanı silindi: id={}", id);
         return "Post deleted successfully with id: " + id;
     }
 
     @Override
-    public PaginationResponse<JobPostResponse> findJobsWithSort(String filed) {
-        List<JobPost> jobPosts=jobPostRepository.findAll(Sort.by(Sort.Direction.ASC,filed));
-        List<JobPostResponse> response=jobPosts.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
-        return new PaginationResponse<>(response.size(),response);
+    public PaginationResponse<JobPostResponse> findJobsWithSort(String field) {
+        List<JobPost> jobPosts = jobPostRepository.findAll(Sort.by(Sort.Direction.ASC, field));
+        List<JobPostResponse> response = jobPosts.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
+        log.debug("Sıralı ilanlar getirildi: field={}, toplam={}", field, response.size());
+        return new PaginationResponse<>(response.size(), response);
     }
 
     @Override
     public PaginationResponse<JobPostResponse> findJobsWithPage(int page, int size) {
-        Page<JobPost> pageJobs=jobPostRepository.findAll(PageRequest.of(page,size));
-        List<JobPostResponse> response=pageJobs.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
-        return new  PaginationResponse<>(response.size(),response);
+        Page<JobPost> pageJobs = jobPostRepository.findAll(PageRequest.of(page, size));
+        List<JobPostResponse> response = pageJobs.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
+        log.debug("Sayfalı ilanlar getirildi: page={}, size={}, toplam={}", page, size, response.size());
+        return new PaginationResponse<>(response.size(), response);
     }
 
     @Override
-    public PaginationResponse<JobPostResponse> findJobsWithPageAndSort(String filed, int page, int size) {
-        Page<JobPost> pageJobs=jobPostRepository.findAll(PageRequest.of(page,size,Sort.by(Sort.Direction.ASC,filed)));
-        List<JobPostResponse> response=pageJobs.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
-        return new  PaginationResponse<>(response.size(),response);
+    public PaginationResponse<JobPostResponse> findJobsWithPageAndSort(String field, int page, int size) {
+        Page<JobPost> pageJobs = jobPostRepository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, field)));
+        List<JobPostResponse> response = pageJobs.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
+        log.debug("Sayfalı ve sıralı ilanlar getirildi: field={}, page={}, size={}, toplam={}", field, page, size, response.size());
+        return new PaginationResponse<>(response.size(), response);
     }
 }
