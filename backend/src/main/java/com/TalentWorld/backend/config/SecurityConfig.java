@@ -44,7 +44,12 @@ public class SecurityConfig {
 
                         // PUBLIC JOB POSTS (DON'T NEEED TO LOGIN)
                         .requestMatchers(HttpMethod.GET, "/api/jobPost/**").permitAll()
-
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/api-docs/**",
+                                "/api-docs.yaml"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception ->
