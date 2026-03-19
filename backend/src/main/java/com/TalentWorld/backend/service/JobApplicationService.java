@@ -21,7 +21,7 @@ public interface JobApplicationService {
     JobApplicationResponse updateApplicationStatus(String applicationId,
                                                    User recruiter,
                                                    JobApplicationStatusUpdateRequest request);
-    PaginationResponse<JobApplicationResponse> findJobApplicationsWithSort(String filed);
+    PaginationResponse<JobApplicationResponse> findJobApplicationsWithSort(String field);
     PaginationResponse<JobApplicationResponse> findJobApplicationsWithPage(int page, int size);
-    PaginationResponse<JobApplicationResponse> findApplicationsWithPageAndSort(String filed,int page,int size);
+    PaginationResponse<JobApplicationResponse> findApplicationsWithPageAndSort(String field,int page,int size);
 }

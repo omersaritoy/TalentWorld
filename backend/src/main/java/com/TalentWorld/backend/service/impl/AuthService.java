@@ -51,7 +51,7 @@ public class AuthService {
         return AuthResponse.from(user, "Bearer " + token);
     }
 
-    public AuthResponse singin(SignInRequest request) {
+    public AuthResponse signin(SignInRequest request) {
         logger.info(String.format("Giriş isteği alındı: email=%s", request.email()));
         try {
             Authentication authentication = authenticationManager.authenticate(

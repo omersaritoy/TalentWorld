@@ -60,7 +60,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
 
-        return ResponseEntity.ok(userService.getUsrByEmail(email));
+        return ResponseEntity.ok(userService.getUserByEmail(email));
     }
 
     @GetMapping("/activeUsers")

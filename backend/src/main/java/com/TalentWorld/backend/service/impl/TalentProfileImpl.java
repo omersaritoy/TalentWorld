@@ -76,7 +76,7 @@ public class TalentProfileImpl implements TalentService {
 
         request.applyTo(profile);
         log.info("Profil güncellendi: userId={}", currentUser.getId());
-        return TalentProfileResponse.toDto(profile);
+        return TalentProfileResponse.toDto(repository.save(profile));
     }
 
     @Override

@@ -141,7 +141,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserResponse getUsrByEmail(String email) {
+    public UserResponse getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new BusinessException(
                 "User not found with email: " + email,
                 "USER_NOT_FOUND",

@@ -14,8 +14,8 @@ public interface JobPostService {
     JobPostResponse createJobPost(User recurringUser, JobPostCreateRequest request);
     JobPostResponse updateJobPost(User recurringUser, JobPostUpdateRequest request,String id);
     String deleteJobPostById(String id);
-    PaginationResponse<JobPostResponse> findJobsWithSort(String filed);
+    PaginationResponse<JobPostResponse> findJobsWithSort(String field);
     PaginationResponse<JobPostResponse> findJobsWithPage(int page, int size);
-    PaginationResponse<JobPostResponse> findJobsWithPageAndSort(String filed, int page, int size);
+    PaginationResponse<JobPostResponse> findJobsWithPageAndSort(String field, int page, int size);
 
 }
