@@ -9,8 +9,8 @@ import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.service.UserService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,6 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name="User", description = "User Operations")
 public class UserController {
     private final UserService userService;
     public UserController(UserService userService) {
@@ -30,6 +31,7 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Getting users")
     public ResponseEntity<List<UserResponse>> getUsers() {
 
         return ResponseEntity.ok(userService.getUsers());
