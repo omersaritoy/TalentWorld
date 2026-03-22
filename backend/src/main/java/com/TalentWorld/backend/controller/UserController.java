@@ -39,12 +39,14 @@ public class UserController {
 
     @GetMapping("/{field}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Getting users with sorted")
     public ResponseEntity<PaginationResponse<UserResponse>> getUsersWithSort(@PathVariable String field) {
         return ResponseEntity.ok(userService.findUserWithShorting(field));
     }
 
     @GetMapping("/pagination")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get users with pagination")
     public ResponseEntity<PaginationResponse<UserResponse>> getUsersWithSort(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(userService.findUsersWithPagination(page, pageSize));
@@ -52,6 +54,8 @@ public class UserController {
 
     @GetMapping("/pagination/pageAndSort")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get users with pagination and sort")
+
     public ResponseEntity<PaginationResponse<UserResponse>> getUsersWithSort(
             @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize, @RequestParam String field) {
 
@@ -60,6 +64,7 @@ public class UserController {
 
     @GetMapping("/getByEmail/{email}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get users by email")
     public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
 
         return ResponseEntity.ok(userService.getUserByEmail(email));
@@ -67,6 +72,7 @@ public class UserController {
 
     @GetMapping("/activeUsers")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get active users")
     public ResponseEntity<List<UserResponse>> getActiveUsers() {
 
         return ResponseEntity.ok(userService.getActiveUsers());
