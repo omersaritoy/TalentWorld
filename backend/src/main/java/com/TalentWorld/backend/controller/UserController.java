@@ -10,6 +10,8 @@ import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.plaf.SeparatorUI;
 import java.util.List;
 
 @RestController
@@ -80,6 +83,7 @@ public class UserController {
 
     @GetMapping("/inActiveUsers")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Get inactive users")
     public ResponseEntity<List<UserResponse>> getInActiveUsers() {
 
         return ResponseEntity.ok(userService.getInActiveUsers());
@@ -87,6 +91,12 @@ public class UserController {
 
     @DeleteMapping("{id}")
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Delete user by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User Deleted successfully"),
+            @ApiResponse(responseCode = "404",description = "User not found"),
+            @ApiResponse(responseCode = "409",description = "User already deleted")
+    })
     public ResponseEntity<String> deleteUserById(@PathVariable String id) {
 
         return ResponseEntity.ok(userService.deleteUserById(id));
@@ -94,6 +104,8 @@ public class UserController {
 
     @PatchMapping("/updateUser/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId==authentication.principal.id")
+    @Operation(summary = "User update")
+
     public ResponseEntity<UserResponse> updateUser(@PathVariable String userId, @RequestBody UserUpdate userUpdate) {
 
         return ResponseEntity.ok(userService.updateUser(userUpdate, userId));
@@ -101,6 +113,7 @@ public class UserController {
 
     @PatchMapping("/changeEmailById/{userId}")
     @PreAuthorize("hasRole('ADMIN') or #userId==authentication.principal.id")
+    @Operation(summary = "User email change")
     public ResponseEntity<UserResponse> changeEmailById(@PathVariable String userId, @RequestBody String email) {
 
         return ResponseEntity.ok(userService.changeEmailById(email, userId));
@@ -108,6 +121,7 @@ public class UserController {
 
     @GetMapping("/me")
     @PreAuthorize("isAuthenticated()")
+    @Operation(summary = "Get me")
     public ResponseEntity<UserResponse> me(Authentication authentication) {
 
         User currentUser = (User) authentication.getPrincipal();

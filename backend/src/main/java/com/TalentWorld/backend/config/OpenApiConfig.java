@@ -8,19 +8,18 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 @Configuration
 public class OpenApiConfig {
 
     @Bean
-    public OpenAPI customOpenAPI() {
+    public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Talent World API")
-                        .description("Talent World Backend REST API Documentation")
+                        .title("TalentWorld API")
+                        .description("TalentWorld Backend REST API Documentation")
                         .version("v1.0.0")
                         .contact(new Contact()
-                                .name("Talent World")
+                                .name("TalentWorld")
                                 .email("contact@talentworld.com")))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components()
@@ -28,8 +27,6 @@ public class OpenApiConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 .scheme("bearer")
                                 .bearerFormat("JWT")
-                                .description("Enter JWT token")));
+                                .description("Enter your JWT token")));
     }
-
-
 }
