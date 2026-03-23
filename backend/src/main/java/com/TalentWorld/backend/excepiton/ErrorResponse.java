@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -22,4 +23,9 @@ public class ErrorResponse {
     private String path;
     private Object details;
     private Map<String, String> validationErrors;
+
+    public ErrorResponse(String validationError, String string) {
+        this.validationErrors = validationError == null ? new HashMap<>() : new HashMap<>(Integer.parseInt(validationError));
+        this.error = string;
+    }
 }
