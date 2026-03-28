@@ -20,7 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 
-import java.util.Objects;
 import java.util.Set;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
@@ -43,7 +42,7 @@ public class AuthServiceTest {
         userRepository = Mockito.mock(UserRepository.class);
         passwordEncoder = Mockito.mock(PasswordEncoder.class);
         jwtService = Mockito.mock(JwtService.class);
-         authenticationManager = Mockito.mock(AuthenticationManager.class);
+        authenticationManager = Mockito.mock(AuthenticationManager.class);
         authService = new AuthService(userRepository, passwordEncoder, authenticationManager, jwtService);
     }
 
@@ -133,6 +132,18 @@ public class AuthServiceTest {
         assertEquals("Bearer mock.jwt.token", response.token());
         verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         verify(jwtService).generateJwtToken(user);
+    }
+
+    @Test
+    void signin_ShouldThrowBusinessException_WhenCredentialsAreInvalid() {
+        SignInRequest request = new SignInRequest("John@example.coms", "Password1@");
+
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenThrow(new RuntimeException("Bad credentials"));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> authService.signin(request));
+        assertEquals("Bad credentials", exception.getMessage());
+        verify(jwtService,never()).generateJwtToken(any());
+
     }
 
 }
