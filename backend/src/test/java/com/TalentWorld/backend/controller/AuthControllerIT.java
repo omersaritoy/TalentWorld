@@ -4,6 +4,7 @@ package com.TalentWorld.backend.controller;
 import com.TalentWorld.backend.dto.request.SignupRequest;
 import com.TalentWorld.backend.dto.response.AuthResponse;
 import com.TalentWorld.backend.enums.Role;
+import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.service.impl.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,10 +14,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -73,8 +76,24 @@ public class AuthControllerIT {
                 .andExpect(jsonPath("$.username", Matchers.is("john@example.com")))
                 .andExpect(jsonPath("$.roles[0]", Matchers.is("ROLE_USER")));
     }
+    @Test
+    void signup_ShouldReturnBadRequest_WhenEmailAlreadyExists() throws Exception {
 
+        SignupRequest signupRequest = new SignupRequest(
+                "John","Doe","john@example.com","Password1@",
+                Set.of(Role.ROLE_USER)
+        );
 
+        when(authService.signup(any(SignupRequest.class)))
+                .thenThrow(new BusinessException("Email already exists","EMAIL_ALREADY_EXIST",HttpStatus.CONFLICT));
+
+        mockMvc.perform(post("/api/auth")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signupRequest)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", Matchers.is("Email already exists")));
+    }
 
 
 }
