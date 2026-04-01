@@ -2,9 +2,6 @@ package com.TalentWorld.backend.controller;
 
 
 import com.TalentWorld.backend.dto.response.UserResponse;
-import com.TalentWorld.backend.entity.User;
-import com.TalentWorld.backend.enums.Role;
-import com.TalentWorld.backend.service.impl.AuthService;
 import com.TalentWorld.backend.service.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
