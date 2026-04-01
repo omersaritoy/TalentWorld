@@ -36,6 +36,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getUsers() {
         List<User> users = userRepository.findAll();
+        if (users.isEmpty()) {
+            throw new BusinessException("Users not found", "USERS_NOT_FOUND", HttpStatus.NOT_FOUND);
+        }
         log.info("Tüm kullanıcılar getirildi: toplam={}", users.size());
         return users.stream().map(UserResponse::toDto).toList();
     }

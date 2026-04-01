@@ -2,7 +2,7 @@ package com.TalentWorld.backend.entity;
 
 import com.TalentWorld.backend.enums.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
