@@ -129,14 +129,4 @@ public class UserController {
             throw new BusinessException("User Not Found", "USER_NOT_FOUND", HttpStatus.NOT_FOUND);
         return ResponseEntity.ok(UserResponse.toDto(currentUser));
     }
-//
-//    @PostMapping("/search")
-//    @PreAuthorize("isAuthenticated()")
-//    public Page<User> search(
-//            @RequestBody UserFilterRequest request,
-//            Pageable pageable
-//    ) {
-//        return userService.search(request, pageable);
-//    }
-
 }

@@ -8,7 +8,6 @@ import com.TalentWorld.backend.dto.request.UserUpdate;
 import com.TalentWorld.backend.dto.response.PaginationResponse;
 
 import com.TalentWorld.backend.dto.response.UserResponse;
-import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 
 import java.util.List;
 
