@@ -6,11 +6,13 @@ import com.TalentWorld.backend.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 
 @SpringBootApplication
+@EnableCaching
 public class BackendApplication /*implements CommandLineRunner*/ {
 //
 //    private final UserRepository userRepository;
