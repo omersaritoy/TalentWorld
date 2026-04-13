@@ -10,7 +10,43 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: talent_world
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
+  app:
+    build: .
+    container_name: talentworld-backend
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/talent_world
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
 volumes:
   mysql_data:
+  redis_data:

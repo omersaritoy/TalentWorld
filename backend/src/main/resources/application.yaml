@@ -14,7 +14,20 @@ spring:
     redis:
       host: localhost
       port: 6379
-
+      timeout: 2000ms
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 5
+          min-idle: 2
+          max-wait: 1000ms
+  cache:
+    type: redis
+    redis:
+      time-to-live: 1800000  # 30 dakika (milisaniye)
+      cache-null-values: false
+      key-prefix: "talentworld:"
+      use-key-prefix: true
 
 logging:
   level:
@@ -32,14 +45,15 @@ logging:
   file:
     name: logs/app.log
   logback:
-    rolling policy:
+    rollingpolicy:
       file-name-pattern: logs/app.%d{yyyy-MM-dd}.%i.log.gz
       max-file-size: 10MB
       max-history: 30
       total-size-cap: 1GB
   pattern:
-    #console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
 management:
   endpoint:
     health:
@@ -57,7 +71,6 @@ springdoc:
 jwt:
   secret: ${JWT_SECRET_KEY}
   expiration: 3600000
-
 
 server:
   port: 8081
