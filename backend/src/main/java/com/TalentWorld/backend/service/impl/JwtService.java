@@ -78,4 +78,14 @@ public class JwtService {
     }
 
 
+    public long getExpirationTime(String token) {
+        Date expiration = Jwts.parser()
+                .verifyWith(getSignKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration();
+
+        return expiration.getTime() - System.currentTimeMillis();
+    }
 }

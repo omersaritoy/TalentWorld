@@ -42,6 +42,8 @@ public class TalentProfileImpl implements TalentService {
     }
 
     @Override
+    @CacheEvict(value = "talentProfile", key = "#currentUser.id")
+
     public TalentProfileResponse createProfile(User currentUser, TalentProfileRequest request) {
         log.info("Profil oluşturma isteği: userId={}", currentUser.getId());
 
@@ -63,7 +65,7 @@ public class TalentProfileImpl implements TalentService {
         return TalentProfileResponse.toDto(saved);
     }
 
-    @CacheEvict(value = "talentProfile", key="#currentUser.id")
+    @CacheEvict(value = "talentProfile", key = "#currentUser.id")
     @Override
     public TalentProfileResponse updateProfile(User currentUser, TalentProfilePatchRequest request) {
         log.info("Profil güncelleme isteği: userId={}", currentUser.getId());
@@ -82,7 +84,7 @@ public class TalentProfileImpl implements TalentService {
         log.info("Profil güncellendi: userId={}", currentUser.getId());
         return TalentProfileResponse.toDto(repository.save(profile));
     }
-
+    @CacheEvict(value = "talentProfile", key = "#currentUser.id")
     @Override
     public String deleteProfile(User currentUser, String talentProfileId) {
         log.info("Profil silme isteği: talentProfileId={}, userId={}", talentProfileId, currentUser.getId());

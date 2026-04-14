@@ -1,6 +1,7 @@
 package com.TalentWorld.backend.config;
 
 import com.TalentWorld.backend.service.impl.JwtService;
+import com.TalentWorld.backend.service.impl.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,8 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final TokenBlacklistService tokenBlacklistService;
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -36,7 +39,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         token = authHeader.replace("Bearer", "").trim();
         email = jwtService.extractEmail(token);
 
-
+        if (tokenBlacklistService.isBlacklisted(token)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has been invalidated");
+            return;
+        }
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 

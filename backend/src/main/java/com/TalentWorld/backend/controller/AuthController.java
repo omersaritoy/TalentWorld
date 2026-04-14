@@ -5,6 +5,8 @@ import com.TalentWorld.backend.dto.request.SignInRequest;
 import com.TalentWorld.backend.dto.request.SignupRequest;
 import com.TalentWorld.backend.dto.response.AuthResponse;
 import com.TalentWorld.backend.service.impl.AuthService;
+import com.TalentWorld.backend.service.impl.JwtService;
+import com.TalentWorld.backend.service.impl.TokenBlacklistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class AuthController {
     private final AuthService authService;
-
+    private final TokenBlacklistService  tokenBlacklistService;
+    private final JwtService jwtService;
 
     @Operation(summary = "Register", description = "Creates a new user account")
     @ApiResponses({
@@ -53,6 +58,15 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "Successfully logged out")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            long expiration = jwtService.getExpirationTime(token);
+            tokenBlacklistService.blacklist(token, expiration);
+            log.info("User logged out successfully");
+        }
+
         SecurityContextHolder.clearContext();
         return ResponseEntity.ok().build();
     }

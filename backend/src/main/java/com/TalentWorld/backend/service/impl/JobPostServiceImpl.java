@@ -13,6 +13,7 @@ import com.TalentWorld.backend.service.JobPostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.TalentWorld.backend.enums.Role.ROLE_RECRUITER;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -32,7 +34,7 @@ public class JobPostServiceImpl implements JobPostService {
 
     private final JobPostRepository jobPostRepository;
 
-    @Cacheable(value = "jobPosts", key="#root.methodName")
+    @Cacheable(value = "jobPosts", key = "#root.methodName")
     @Override
     public List<JobPostResponse> getJobPosts() {
         List<JobPost> jobPosts = jobPostRepository.findAll();
@@ -41,7 +43,7 @@ public class JobPostServiceImpl implements JobPostService {
     }
 
 
-    @Cacheable(value = "jobPost", key="#id")
+    @Cacheable(value = "jobPost", key = "#id")
     @Override
     public JobPostResponse getJobPostById(String id) {
         JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> {
@@ -56,6 +58,7 @@ public class JobPostServiceImpl implements JobPostService {
     }
 
     @Override
+    @CacheEvict(value = {"jobPosts", "jobPost"}, allEntries = true)
     public JobPostResponse createJobPost(User recurringUser, JobPostCreateRequest request) {
         log.info("İş ilanı oluşturma isteği: userId={}", recurringUser.getId());
 
@@ -82,6 +85,7 @@ public class JobPostServiceImpl implements JobPostService {
 
     @Override
     @Transactional
+    @CacheEvict(value = {"jobPosts", "jobPost"}, allEntries = true)
     public JobPostResponse updateJobPost(User currentUser, JobPostUpdateRequest request, String id) {
         log.info("İş ilanı güncelleme isteği: id={}, userId={}", id, currentUser.getId());
 
@@ -108,6 +112,7 @@ public class JobPostServiceImpl implements JobPostService {
     }
 
     @Override
+    @CacheEvict(value = {"jobPosts", "jobPost"}, key = "#id")
     public String deleteJobPostById(String id) {
         JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> {
             log.warn("Silinecek ilan bulunamadı: id={}", id);
