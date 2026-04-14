@@ -10,6 +10,8 @@ import com.TalentWorld.backend.repository.TalentProfileRepository;
 import com.TalentWorld.backend.service.TalentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ import java.util.Objects;
 public class TalentProfileImpl implements TalentService {
     private final TalentProfileRepository repository;
 
+    @Cacheable(value = "talentProfile", key="#currentUser.id")
     @Override
     public TalentProfileResponse getMyProfile(User currentUser) {
         log.info("Profil getirme isteği: userId={}", currentUser.getId());
@@ -60,6 +63,7 @@ public class TalentProfileImpl implements TalentService {
         return TalentProfileResponse.toDto(saved);
     }
 
+    @CacheEvict(value = "talentProfile", key="#currentUser.id")
     @Override
     public TalentProfileResponse updateProfile(User currentUser, TalentProfilePatchRequest request) {
         log.info("Profil güncelleme isteği: userId={}", currentUser.getId());

@@ -4,6 +4,7 @@ import com.TalentWorld.backend.entity.JobApplication;
 import com.TalentWorld.backend.entity.TalentProfile;
 import com.TalentWorld.backend.enums.ApplicationStatus;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -13,7 +14,7 @@ public record TalentProfileResponse(
         Integer experienceYear,
         String about,
         Set<String> skills
-) {
+) implements Serializable {
     public static TalentProfileResponse toDto(TalentProfile profile) {
         return new TalentProfileResponse(
                 profile.getId(),

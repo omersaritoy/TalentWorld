@@ -13,6 +13,7 @@ import com.TalentWorld.backend.service.JobPostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -31,6 +32,7 @@ public class JobPostServiceImpl implements JobPostService {
 
     private final JobPostRepository jobPostRepository;
 
+    @Cacheable(value = "jobPosts", key="#root.methodName")
     @Override
     public List<JobPostResponse> getJobPosts() {
         List<JobPost> jobPosts = jobPostRepository.findAll();
@@ -38,6 +40,8 @@ public class JobPostServiceImpl implements JobPostService {
         return jobPosts.stream().map(JobPostResponse::toDto).collect(Collectors.toList());
     }
 
+
+    @Cacheable(value = "jobPost", key="#id")
     @Override
     public JobPostResponse getJobPostById(String id) {
         JobPost jobPost = jobPostRepository.findById(id).orElseThrow(() -> {

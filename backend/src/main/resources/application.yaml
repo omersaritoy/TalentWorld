@@ -21,6 +21,7 @@ spring:
           max-idle: 5
           min-idle: 2
           max-wait: 1000ms
+
   cache:
     type: redis
     redis:
@@ -28,6 +29,7 @@ spring:
       cache-null-values: false
       key-prefix: "talentworld:"
       use-key-prefix: true
+      
 
 logging:
   level:

@@ -4,6 +4,7 @@ package com.TalentWorld.backend.service.impl;
 import com.TalentWorld.backend.dto.response.PaginationResponse;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,6 +34,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
+    @Cacheable(value = "users",key="#root.methodName",unless = "#result==null")
     @Override
     public List<UserResponse> getUsers() {
         List<User> users = userRepository.findAll();
@@ -43,6 +45,7 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(UserResponse::toDto).toList();
     }
 
+    @Cacheable(value = "activeUsers",key="#root.methodName",unless = "#result==null")
     @Override
     public List<UserResponse> getActiveUsers() {
         List<User> users = userRepository.findByIsActive(true);
@@ -54,6 +57,7 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(UserResponse::toDto).toList();
     }
 
+    @Cacheable(value = "inactiveUsers",key="#root.methodName",unless = "#result==null")
     @Override
     public List<UserResponse> getInActiveUsers() {
         List<User> users = userRepository.findByIsActive(false);
