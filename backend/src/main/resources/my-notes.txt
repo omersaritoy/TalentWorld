@@ -1,18 +1,100 @@
+================================================================
+           LOGGING & REDIS CACHING — PROJE NOTLARI
+================================================================
 
-#Logging#
--logs should be asynchronous
-- must don't use printStackTrace ve System.out.println() because disrupts log structure (format(format can change in product or other steps))
--should be sensitive data (must don't use identity,email or special information)
--All logs should be collected in a central location and be in a specific format.
--Level should be used carefully.
--The different Levels and The different appends can be use
+----------------------------------------------------------------
+1. LOGGING — GENEL KURALLAR
+----------------------------------------------------------------
 
-TRACE->DEBUG->INFO->WARN->ERROR->OFF
+ASENKRON LOGLAMA
+- Log yazma işlemi I/O'dur, ana thread'i bloke etmemeli
+- Logback'te AsyncAppender kullanılmalı
+- queueSize ve discardingThreshold ayarlanmalı
 
-logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36}
+YASAKLI KULLANIM
+- e.printStackTrace()     → YASAK, log formatını bozar
+- System.out.println()    → YASAK, log sistemini tamamen atlar
+- Her zaman log.error("mesaj", e) şeklinde kullanılmalı
+
+HASSAS VERİ KURALLARI
+- LOGLANMAZ: TC kimlik no, e-posta, telefon, şifre, token, kart no
+- DOĞRU  : log.info("Kullanıcı güncellendi: id={}", id)
+- YANLIŞ : log.info("Email değişti: {}", user.getEmail())
+- Mevcut kodda userId bazlı loglama uygulanmış ancak
+  changeEmailById metodunda email bilgisi log'a düşmemeli
+
+LOG SEVİYELERİ — NE ZAMAN KULLANILIR
+  TRACE → Çok detaylı debug, döngü içi izleme (prod'da kapalı olmalı)
+  DEBUG → Geliştirme ortamı detayları, ara değerler
+  INFO  → Normal iş akışı olayları: kayıt oluşturuldu, güncellendi
+  WARN  → Beklenmeyen ama kurtarılabilir: kullanıcı bulunamadı, retry
+  ERROR → İşlem başarısız: exception, veri kaybı riski, dış servis hatası
+
+LOG PATTERN & MERKEZI TOPLAMA
+- Tüm loglar tek bir format ile yazılmalı (JSON veya pattern tabanlı)
+- Farklı appender'lar kullanılabilir:
+    ConsoleAppender + FileAppender + AsyncAppender
+- Merkezi toplama için önerilenler:
+    ELK Stack (Elasticsearch + Logstash + Kibana)
+    Loki + Grafana
+
+- Önerilen console pattern:
+  logging.pattern.console=
+  %d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
 
 
+----------------------------------------------------------------
+2. REDIS CACHING — KURALLAR & UYGULAMA NOKTALARI
+----------------------------------------------------------------
+
+TEMEL KURALLAR
+- Cache'lenecek veri sık okunan, nadir değişen olmalı
+- Her @Cacheable'ın bir @CacheEvict karşılığı olmalı
+- TTL (süresi dolma) mutlaka tanımlanmalı, stale veri riski var
+- @Transactional + @Cacheable birlikte dikkatli kullanılmalı
+
+CACHE KEY TASARIMI
+- #root.methodName    → parametresiz listeler için uygun
+- #id veya #currentUser.id → tekil kayıtlar için
+- Key çakışmalarını önlemek için value (cache adı) benzersiz olmalı
+- Hassas veri (e-posta, TC vb.) key'e de yazılmamalı
 
 
+SERVİS BAZLI CACHE NOKTALARI
+------------------------------
+
+UserServiceImpl
+  [MEVCUT] getUsers, getActiveUsers, getInActiveUsers → @Cacheable var
+           Redis backend bağlanmadan bunlar in-memory çalışır!
+  [EKSİK]  deleteUserById ve updateUser sonrası:
+           @CacheEvict(value="users", allEntries=true) eklenmeli
+
+JobPostServiceImpl
+  [EKSİK]  getJobPosts    → @Cacheable(value="jobPosts") eklenmeli
+  [EKSİK]  getJobPostById → @Cacheable(value="jobPost", key="#id") eklenmeli
+  [EKSİK]  createJobPost, updateJobPost, deleteJobPostById sonrası
+           @CacheEvict zorunlu
+
+TalentProfileImpl
+  [EKSİK]  getMyProfile →
+           @Cacheable(value="talentProfile", key="#currentUser.id") eklenmeli
+  [EKSİK]  updateProfile ve deleteProfile sonrası evict edilmeli
 
 
+EK KULLANIM ALANLARI
+---------------------
+
+Rate Limiting (applyToJob metodu)
+  - Kullanıcı başına başvuru sıklığı sınırlanabilir
+  - Key    : apply:rateLimit:{userId}
+  - TTL    : 60 saniye
+  - Max    : 5 istek
+  - Yöntem : RedisTemplate.opsForValue().increment() ile sayaç
+
+Token Blacklist (deleteUserById / logout)
+  - Soft-delete sonrası kullanıcının JWT'si hâlâ geçerli → güvenlik açığı
+  - Key    : blacklist:{token}
+  - TTL    : token'ın kalan geçerlilik süresi
+  - Her istekte JWT filter'ında bu key kontrol edilmeli
+
+================================================================
