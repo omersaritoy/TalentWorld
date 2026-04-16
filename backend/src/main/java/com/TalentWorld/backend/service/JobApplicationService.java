@@ -6,7 +6,6 @@ import com.TalentWorld.backend.dto.response.JobApplicationResponse;
 import com.TalentWorld.backend.dto.response.MyApplicationResponse;
 import com.TalentWorld.backend.dto.response.PaginationResponse;
 import com.TalentWorld.backend.entity.User;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 

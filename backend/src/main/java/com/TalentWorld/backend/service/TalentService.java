@@ -3,7 +3,6 @@ package com.TalentWorld.backend.service;
 
 import com.TalentWorld.backend.dto.request.TalentProfilePatchRequest;
 import com.TalentWorld.backend.dto.request.TalentProfileRequest;
-import com.TalentWorld.backend.dto.response.PaginationResponse;
 import com.TalentWorld.backend.dto.response.TalentProfileResponse;
 import com.TalentWorld.backend.entity.User;
 

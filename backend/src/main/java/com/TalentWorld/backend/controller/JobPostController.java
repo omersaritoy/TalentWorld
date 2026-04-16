@@ -3,7 +3,6 @@ package com.TalentWorld.backend.controller;
 import com.TalentWorld.backend.dto.request.JobPostCreateRequest;
 import com.TalentWorld.backend.dto.request.JobPostUpdateRequest;
 import com.TalentWorld.backend.dto.response.JobPostResponse;
-import com.TalentWorld.backend.dto.response.PaginationResponse;
 import com.TalentWorld.backend.entity.User;
 import com.TalentWorld.backend.service.JobPostService;
 import io.swagger.v3.oas.annotations.Operation;
