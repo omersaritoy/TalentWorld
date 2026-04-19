@@ -24,10 +24,11 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (!userRepository.existsByEmail("admin2@gmail.com")) {
+        if (!userRepository.existsByEmail("admin@gmail.com")) {
             User admin = new User();
-            admin.setEmail("admin2@gmail.com");
+            admin.setEmail("admin@gmail.com");
             admin.setPassword(passwordEncoder.encode("admin123!!"));
+            admin.setRoles(Collections.singleton(Role.ROLE_ADMIN));
             userRepository.save(admin);
         }
         if (!userRepository.existsByEmail("recruiter@gmail.com")) {
