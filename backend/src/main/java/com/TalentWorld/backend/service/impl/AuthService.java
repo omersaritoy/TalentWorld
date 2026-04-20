@@ -30,6 +30,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final RateLimitingService rateLimitService;
 
     public AuthResponse signup(SignupRequest request) {
         log.info("Signup request received: email={}", request.email());
@@ -52,7 +53,8 @@ public class AuthService {
     }
 
     public AuthResponse signin(SignInRequest request) {
-        log.info("Signin request received: email={}", request.email());
+        log.info("Signing request received: email={}", request.email());
+        rateLimitService.checkLimit(request.email(), "signing");
 
         try {
             Authentication authentication = authenticationManager.authenticate(
