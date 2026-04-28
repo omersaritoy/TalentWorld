@@ -39,4 +39,4 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/talentworld-backend:latest
+          tags: fltepior/talentworld-backend:latest
