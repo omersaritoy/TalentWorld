@@ -10,6 +10,10 @@ jobs:
     name: Build and Deploy Spring Boot App
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,7 +36,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v5
         with:
-          context: .
-          dockerfile: Dockerfile
+          context: ./backend
+          dockerfile: ./backend/Dockerfile
           push: true
-          tags: DOCKER_HUB_USERNAME/myapp:0.1.0
+          tags: DOCKER_HUB_USERNAME/talentworld-backend:latest
