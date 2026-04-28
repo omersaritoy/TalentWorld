@@ -45,6 +45,7 @@ public class AuthServiceTest {
         passwordEncoder = Mockito.mock(PasswordEncoder.class);
         jwtService = Mockito.mock(JwtService.class);
         authenticationManager = Mockito.mock(AuthenticationManager.class);
+        rateLimitingService= Mockito.mock(RateLimitingService.class);
         authService = new AuthService(userRepository, passwordEncoder, authenticationManager, jwtService,rateLimitingService);
     }
 
