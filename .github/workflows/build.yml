@@ -37,6 +37,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend
-          dockerfile: ./backend/Dockerfile
+          file: ./backend/Dockerfile
           push: true
-          tags: DOCKER_HUB_USERNAME/talentworld-backend:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/talentworld-backend:latest
