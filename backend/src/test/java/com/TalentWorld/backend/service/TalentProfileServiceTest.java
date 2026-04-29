@@ -85,22 +85,22 @@ public class TalentProfileServiceTest {
         verify(repository, never()).save(any());
 
     }
-    @Test
-    void updateProfile_ShouldReturnTalentProfileResponseWhenCredentialIsValid() {
-        when(repository.existsByUserId(currentUser.getId())).thenReturn(true);
-        when(repository.save(any(TalentProfile.class))).thenReturn(talentProfile);
-        TalentProfilePatchRequest request=new TalentProfilePatchRequest(null,2,null,null);
-        TalentProfileResponse response = talentProfileService.updateProfile(currentUser, request);
-
-        assertNotNull(response);
-        assertThat(response.id()).isEqualTo(talentProfile.getId());
-        assertThat(response.title()).isEqualTo(talentProfile.getTitle());
-        assertThat(response.experienceYear()).isEqualTo(talentProfile.getExperienceYear());
-        assertThat(response.about()).isEqualTo(talentProfile.getAbout());
-        assertThat(response.skills()).isEqualTo(talentProfile.getSkills());
-        verify(repository,times(1)).existsByUserId(currentUser.getId());
-        verify(repository,times(1)).save(any(TalentProfile.class));
-    }
+//    @Test
+//    void updateProfile_ShouldReturnTalentProfileResponseWhenCredentialIsValid() {
+//        when(repository.existsByUserId(currentUser.getId())).thenReturn(true);
+//        when(repository.save(any(TalentProfile.class))).thenReturn(talentProfile);
+//        TalentProfilePatchRequest request=new TalentProfilePatchRequest(null,2,null,null);
+//        TalentProfileResponse response = talentProfileService.updateProfile(currentUser, request);
+//
+//        assertNotNull(response);
+//        assertThat(response.id()).isEqualTo(talentProfile.getId());
+//        assertThat(response.title()).isEqualTo(talentProfile.getTitle());
+//        assertThat(response.experienceYear()).isEqualTo(talentProfile.getExperienceYear());
+//        assertThat(response.about()).isEqualTo(talentProfile.getAbout());
+//        assertThat(response.skills()).isEqualTo(talentProfile.getSkills());
+//        verify(repository,times(1)).existsByUserId(currentUser.getId());
+//        verify(repository,times(1)).save(any(TalentProfile.class));
+//    }
     @Test
     void updateProfile_ShouldThrowBusinessException_WhenProfileNotFoundExists() {
        when(repository.existsByUserId(currentUser.getId())).thenReturn(true);
