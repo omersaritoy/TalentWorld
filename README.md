@@ -38,7 +38,8 @@ This project provides a complete backend solution for a talent-job matching plat
 - Spring Boot Actuator  
 - JUnit & Mockito  
 - Spring Boot Test  
-- SLF4J / Logback  
+- SLF4J / Logback
+- Java Mail Sender
 
 ---
 
