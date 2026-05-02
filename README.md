@@ -22,7 +22,7 @@ This project provides a complete backend solution for a talent-job matching plat
 - ❗ Global exception handling  
 - ✅ Request validation (`@Valid`)  
 - 🔄 DTO-based architecture  
-
+- Mail Sender
 ---
 
 ## 🛠️ Technologies Used
