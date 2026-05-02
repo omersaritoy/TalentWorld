@@ -8,6 +8,7 @@ import com.TalentWorld.backend.enums.Role;
 import com.TalentWorld.backend.excepiton.BusinessException;
 import com.TalentWorld.backend.repository.UserRepository;
 import com.TalentWorld.backend.service.impl.AuthService;
+import com.TalentWorld.backend.service.impl.EmailService;
 import com.TalentWorld.backend.service.impl.JwtService;
 import com.TalentWorld.backend.service.impl.RateLimitingService;
 import org.junit.jupiter.api.AfterEach;
@@ -38,6 +39,7 @@ public class AuthServiceTest {
     private AuthenticationManager authenticationManager;
     private JwtService jwtService;
     private RateLimitingService rateLimitingService;
+    private EmailService emailService;
 
     @BeforeEach
     public void setup() {
@@ -46,7 +48,8 @@ public class AuthServiceTest {
         jwtService = Mockito.mock(JwtService.class);
         authenticationManager = Mockito.mock(AuthenticationManager.class);
         rateLimitingService= Mockito.mock(RateLimitingService.class);
-        authService = new AuthService(userRepository, passwordEncoder, authenticationManager, jwtService,rateLimitingService);
+        emailService = Mockito.mock(EmailService.class);
+        authService = new AuthService(userRepository, passwordEncoder, authenticationManager, jwtService,rateLimitingService,emailService);
     }
 
     @AfterEach

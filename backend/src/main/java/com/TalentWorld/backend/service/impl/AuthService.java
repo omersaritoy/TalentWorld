@@ -31,6 +31,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final RateLimitingService rateLimitService;
+    private final EmailService emailService;
 
     public AuthResponse signup(SignupRequest request) {
         log.info("Signup request received: email={}", request.email());
@@ -44,10 +45,10 @@ public class AuthService {
 
         User user = SignupRequest.toUser(request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        emailService.sendMail(request.email(),"Create Account","Your Account has been successfully created");
         user = userRepository.save(user);
 
         log.info("User created successfully: id={}, email={}", user.getId(), request.email());
-
         String token = jwtService.generateJwtToken(user);
         return AuthResponse.from(user, "Bearer " + token);
     }
